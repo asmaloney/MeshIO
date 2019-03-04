@@ -1,0 +1,6 @@
+<RCC>
+  <qresource prefix="/asmaloney/MeshIO" >
+    <file>images/icon.svg</file>
+    <file>info.json</file>
+  </qresource>
+</RCC>

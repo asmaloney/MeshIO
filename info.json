@@ -1,0 +1,28 @@
+{
+	"type" : "I/O",
+	"name" : "Mesh I/O",
+	"icon" : ":/asmaloney/MeshIO/images/icon.svg",
+	"description": "Import mesh formats using the Open Asset Import Library library. Currently reads glTF, COLLADA, and IFC.",
+	"authors" : [
+		{
+			"name" : "Andy Maloney",
+			"email" : "asmaloney@gmail.com"
+		}
+	],
+	"maintainers" : [
+		{
+			"name" : "Andy Maloney",
+			"email" : "asmaloney@gmail.com"
+		}
+	],
+	"references" : [
+		{
+			"text" : "The Open Asset Import Library library",
+			"url" : "https://github.com/assimp/assimp"
+		},
+		{
+			"text" : "Icon by qubodup is Public Domain",
+			"url" : "https://openclipart.org/detail/168258/3d-cube-icon"
+		}
+	]
+}

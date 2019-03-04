@@ -1,0 +1,355 @@
+// MeshIO Copyright © 2019 Andy Maloney <asmaloney@gmail.com>
+// SPDX-License-Identifier: BSD-3-Clause
+
+#include <QDebug>
+#include <QDir>
+#include <QFileInfo>
+#include <QProgressDialog>
+
+#ifdef QT_DEBUG
+#include <iostream>
+#endif
+
+#include "ccMesh.h"
+
+#include "assimp/DefaultLogger.hpp"
+#include "assimp/Importer.hpp"
+#include "assimp/ProgressHandler.hpp"
+
+#include "assimp/postprocess.h"
+#include "assimp/scene.h"
+
+#include "mioAbstractLoader.h"
+#include "mioUtils.h"
+
+
+class _LogStream : public Assimp::LogStream
+{
+   void	write( const char *inMessage ) override
+   {
+      QString   message = QString( inMessage ).trimmed();
+      int	messageLevel = ccLog::LOG_STANDARD;
+      
+      if ( message.startsWith( "Warn" ) )
+      {
+         messageLevel = ccLog::LOG_WARNING;
+      }
+      else if ( message.startsWith( "Error" ) )
+      {
+         messageLevel = ccLog::LOG_ERROR;
+      }
+      else if ( message.startsWith( "Info" ) )
+      {
+         messageLevel = ccLog::LOG_DEBUG;
+      }
+      
+      message.prepend( "[MeshIO] ai - " );
+      
+      ccLog::LogMessage( message, messageLevel );
+   }
+};
+
+class _ProgressHandler : public QProgressDialog, public Assimp::ProgressHandler
+{
+ public:
+   _ProgressHandler( const QString &inText ) :
+      cText( inText )
+   {
+      setWindowModality( Qt::WindowModal );
+      setWindowTitle( tr( "Import Mesh" ) );
+      
+      setMinimumDuration( 0 );
+      
+      setMinimumSize( 400, 100 );
+   }
+   
+   bool	Update( float inPercent ) override
+   {
+      int   value = qRound( inPercent * 100.0f );
+      
+      setLabelText( QStringLiteral( "Loading %1: %2%" ).arg( cText, QString::number( value ) ) );
+      
+      setValue( value );
+      
+      return wasCanceled();
+   }
+   
+ private:
+   const QString    cText;
+};
+
+class _Loader
+{
+ public:
+   _Loader( const aiScene *inScene, const QString &inFileName, const QString &inPath ) :
+      cScene( inScene ),
+      cFileName( inFileName ),
+      cPath( inPath )
+   {
+      _initCameraNames();
+   }
+   
+   void	load( ccHObject &ioContainer )
+   {
+      if ( cScene->HasMeshes() )
+      {
+         ccLog::Print( QStringLiteral( "[MeshIO] The file '%1' has %2 meshes" ).arg(
+            cFileName,
+            QLocale::system().toString( cScene->mNumMeshes ) ) );
+      }
+      
+      if ( cScene->HasCameras() )
+      {
+         ccLog::Print( QStringLiteral( "[MeshIO] The file '%1' has %2 cameras" ).arg(
+            cFileName,
+            QLocale::system().toString( cScene->mNumCameras ) ) );
+      }
+      
+      _recursiveAddNode( cScene->mRootNode, cScene, &ioContainer );
+      
+      ioContainer.applyGLTransformation_recursive();
+      ioContainer.resetGLTransformationHistory();
+      
+      _pruneTree( &ioContainer );
+   }
+   
+ private:
+   void	_initCameraNames()
+   {
+      for ( unsigned int i = 0; i < cScene->mNumCameras; ++i )
+      {
+         const auto     cCamera = cScene->mCameras[i];
+         const QString	cCameraName( cCamera->mName.C_Str() );
+         
+         mCameraMap[cCameraName] = cCamera;
+      }
+   }
+   
+   void	_recursiveAddNode( const aiNode *inNode, const aiScene *inScene, ccHObject *ioCurrentObject )
+   {
+      //	std::cout << "Process node: " << inNode->mName.C_Str() << std::endl;
+      //	std::cout << "  num children: " << inNode->mNumChildren << std::endl;
+      //	std::cout << "  num meshes: " << inNode->mNumMeshes << std::endl;
+      
+      const bool    cNodeHasTransform = !inNode->mTransformation.IsIdentity();
+      
+      if ( cNodeHasTransform )
+      {
+         ccGLMatrix	transform = mioUtils::convertMatrix( inNode->mTransformation );
+         
+         ioCurrentObject->setGLTransformation( transform );
+      }
+      
+      for ( unsigned int i = 0; i < inNode->mNumChildren; ++i )
+      {
+         const auto     cChild = inNode->mChildren[i];
+         const QString	cChildName( cChild->mName.C_Str() );
+         
+         auto	childObject = ioCurrentObject;
+         
+         // If we only have one child, and it does not contain a transform, collapse this node
+         // TODO Add a tree walk and be smarter about cleaning up the empty nodes
+         if ( (cChild->mNumChildren != 1) || !cChild->mTransformation.IsIdentity() )
+         {
+            childObject = new ccHObject( cChildName );
+            
+            ioCurrentObject->addChild( childObject );
+         }
+         
+         // meshes
+         for ( unsigned int j = 0; j < cChild->mNumMeshes; ++j )
+         {
+            const auto	cMeshIndex = cChild->mMeshes[j];
+            const auto	mesh = inScene->mMeshes[cMeshIndex];
+            
+            ccMesh  *newMesh = mioUtils::newCCMeshFromAIMesh( mesh );
+            
+            if ( newMesh == nullptr )
+            {
+               continue;
+            }
+            
+            auto    materialSet = mioUtils::createMaterialSetForMesh( mesh, cPath, inScene->mNumMaterials, inScene->mMaterials );
+            
+            if ( materialSet != nullptr )
+            {
+               newMesh->setMaterialSet( materialSet );
+               newMesh->showMaterials( true );
+            }
+            
+            childObject->addChild( newMesh );
+         }
+         
+         // metadata
+         if ( cChild->mMetaData != nullptr )
+         {
+            const auto	data = cChild->mMetaData;
+            
+            for ( unsigned int i = 0; i < data->mNumProperties; ++i )
+            {
+               const auto   cMetaKey = data->mKeys[i].C_Str();
+               QVariant     metaValue = mioUtils::convertMetaValueToVariant( data, i );
+               
+               std::cout << "Setting meta: " << cMetaKey << " = " << metaValue.toString().toLatin1().constData() << std::endl;
+               
+               childObject->setMetaData( cMetaKey, metaValue );
+            }
+         }
+         
+         _recursiveAddNode( cChild, inScene, childObject );
+      }
+   }
+   
+   void	_pruneTree( ccHObject *ioCurrentObject )
+   {
+      const auto    cChildCount = ioCurrentObject->getChildrenNumber();
+      
+      std::vector<ccHObject *>	children;
+      
+      // Because the indices change when we delete children, save a list and process that instead
+      for ( unsigned int i = 0; i < cChildCount; ++i )
+      {
+         children.push_back( ioCurrentObject->getChild( i ) );
+      }
+      
+      for ( auto child : children )
+      {
+         _pruneTree( child );
+      }
+      
+      // If we are not a "naked" hierarchy object, then we contain useful info, so return
+      if ( ioCurrentObject->getClassID() != CC_TYPES::HIERARCHY_OBJECT )
+      {
+         return;
+      }
+      
+      // If we don't have a parent, then we are the top level, so return
+      auto  parent = ioCurrentObject->getParent();
+      
+      if ( parent == nullptr )
+      {
+         return;
+      }
+      
+      // If we don't have children, then we can be pruned
+      if ( cChildCount == 0 )
+      {
+#ifdef QT_DEBUG
+         //			std::cout << "pruning: " << ioCurrentObject->getName().toLatin1().constData() << std::endl;
+#endif
+         
+         parent->detachChild( ioCurrentObject );
+         
+         delete ioCurrentObject;
+      }
+      else if ( (cChildCount == 1) &&
+                ioCurrentObject->metaData().empty() )
+      {
+         // If we have one child, and it doesn't have useful data,
+         // Then we can reparent it
+         
+         auto	child = ioCurrentObject->getChild( 0 );
+         
+         if ( child != nullptr )
+         {
+#ifdef QT_DEBUG
+            std::cout << "reparenting: " << child->getName().toLatin1().constData()
+                      << " from " << ioCurrentObject->getName().toLatin1().constData()
+                      << " to " << parent->getName().toLatin1().constData()
+                      << std::endl;
+#endif
+            
+            ioCurrentObject->detachChild( child );
+            child->setName( ioCurrentObject->getName() );
+            
+            parent->addChild( child );
+            
+            delete ioCurrentObject;
+         }
+      }
+   }
+   
+   const aiScene    *cScene;
+   const QString    cFileName;
+   const QString    cPath;
+   
+   QMap<QString, const aiCamera *>  mCameraMap;
+};
+
+bool mioAbstractLoader::importSupported() const
+{
+   return true;
+}
+
+bool mioAbstractLoader::exportSupported() const
+{
+   return false;
+}
+
+CC_FILE_ERROR mioAbstractLoader::loadFile( const QString &inFileName, ccHObject &ioContainer, FileIOFilter::LoadParameters &inParameters )
+{
+   const auto	cFileName = QFileInfo( inFileName ).fileName();
+   const auto	cPath = QFileInfo( inFileName ).absoluteDir().path();
+   
+   ccLog::Print( QStringLiteral( "[MeshIO] Loading file '%1'" ).arg( inFileName ) );
+   
+   Assimp::DefaultLogger::create( "", Assimp::Logger::NORMAL, aiDefaultLogStream_STDOUT );
+   
+   unsigned int	loggingSeverity = Assimp::Logger::Err | Assimp::Logger::Warn;
+   
+#ifdef QT_DEBUG
+   loggingSeverity |= Assimp::Logger::Info;
+   loggingSeverity |= Assimp::Logger::Debugging;
+#endif
+   
+   Assimp::DefaultLogger::get()->attachStream( new _LogStream, loggingSeverity );
+   
+   Assimp::Importer importer;
+   
+   importer.SetProgressHandler( new _ProgressHandler( cFileName ) );
+   
+   // removes things we don't care about from the import
+   importer.SetPropertyInteger( AI_CONFIG_PP_RVC_FLAGS,
+                                aiComponent_ANIMATIONS |
+                                   aiComponent_BONEWEIGHTS |
+                                   aiComponent_CAMERAS |
+                                   aiComponent_LIGHTS );
+   
+   importer.SetPropertyBool( AI_CONFIG_IMPORT_NO_SKELETON_MESHES, true );
+   importer.SetPropertyBool( AI_CONFIG_IMPORT_COLLADA_USE_COLLADA_NAMES, true );
+   importer.SetPropertyBool( AI_CONFIG_PP_FD_REMOVE, true );
+   importer.SetPropertyBool( AI_CONFIG_PP_FID_IGNORE_TEXTURECOORDS, true );
+   
+   const aiScene *scene = importer.ReadFile( inFileName.toStdString(),
+                                             aiProcess_FindInvalidData |
+                                                aiProcess_JoinIdenticalVertices |
+                                                aiProcess_RemoveComponent |
+                                                aiProcess_Triangulate |
+                                                aiProcess_ValidateDataStructure );
+   
+   if ( scene == nullptr )
+   {
+      ccLog::Warning( QStringLiteral( "[MeshIO] The file '%1' has errors: %2" ).arg( cFileName, importer.GetErrorString() ) );
+      
+      Assimp::DefaultLogger::kill();
+      
+      return CC_FERR_READING;
+   }
+   
+   _Loader  loader( scene, cFileName, cPath );
+   
+   loader.load( ioContainer );
+   
+   Assimp::DefaultLogger::kill();
+   
+   return CC_FERR_NO_ERROR;
+}
+
+bool mioAbstractLoader::canSave( CC_CLASS_ENUM type, bool &multiple, bool &exclusive ) const
+{
+   Q_UNUSED( type );
+   Q_UNUSED( multiple );
+   Q_UNUSED( exclusive );
+   
+   return false;
+}
