@@ -22,10 +22,6 @@ class aiMetadata;
 
 namespace mioUtils
 {
-   // This maps an aiMaterial index to a ccMaterialSet index
-   using MaterialIndexMap = QMap<unsigned int, int>;
-   
-   ccMaterialSet    *createSharedMaterialSet( const QString &inPath, unsigned int inNumMaterial, aiMaterial **inMaterials, MaterialIndexMap &outMap );
    ccMaterialSet    *createMaterialSetForMesh( const aiMesh *inMesh, const QString &inPath, unsigned int inNumMaterial, aiMaterial **inMaterials );
    
    ccMesh   *newCCMeshFromAIMesh( const aiMesh *inMesh );

@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: BSD-3-Clause
 
 #include <QImageReader>
+#include <QRegularExpression>
 #include <QVector3D>
 
 #include "ccHObjectCaster.h"
@@ -18,49 +19,39 @@
 
 namespace mioUtils
 {
-   ccMaterialSet    *createSharedMaterialSet( const QString &inPath, unsigned int inNumMaterial, aiMaterial **inMaterials, MaterialIndexMap &outMap )
+   ccMaterial::Shared   _createMaterial( const QString &inPath, const QString &inName, const QString &inTexturePath )
    {
-      if ( inNumMaterial == 0 )
-      {
-         return nullptr;
-      }
-      
-      auto  materialSet = new ccMaterialSet( "Materials" );
-      
-      for ( unsigned int i = 0; i < inNumMaterial; ++i )
-      {
-         const auto material = inMaterials[i];
-         aiString   name;
-         
-         material->Get( AI_MATKEY_NAME, name );
-         
-         if ( material->GetTextureCount( aiTextureType_DIFFUSE ) > 0 )
-         {
-            aiString texturePath;
+      static QRegularExpression sRegExp( "^\\*(?<index>[0-9]+)$" );
             
-            if ( material->GetTexture( aiTextureType_DIFFUSE, 0, &texturePath ) == AI_SUCCESS )
-            {
-               const QString    cPath = QStringLiteral( "%1/%2" ).arg( inPath, texturePath.C_Str() );
-               
-               if ( !QFile::exists( cPath ) )
-               {
-                  ccLog::Warning( QStringLiteral( "[MeshIO] Material not found: '%1'" ).arg( cPath ) );
-                  continue;
-               }
-               
-               QImageReader reader( cPath );
-               
-               QImage   textureImage = reader.read();
-               
-               ccMaterial::Shared mat( new ccMaterial( name.C_Str() ) );
-               mat->setTexture( textureImage, cPath, false );
-               
-               outMap[i] = materialSet->addMaterial( mat );
-            }
+      ccMaterial::Shared mat;
+      
+      auto  match = sRegExp.match( inTexturePath );
+            
+      if ( match.hasMatch() )
+      {
+         const QString cIndex = match.captured( "index" );
+                  
+         ccLog::Warning( QStringLiteral( "[MeshIO] Embedded materials not yet handled" ) );
+      }
+      else
+      {
+         const QString    cPath = QStringLiteral( "%1/%2" ).arg( inPath, inTexturePath );
+         
+         if ( !QFile::exists( cPath ) )
+         {
+            ccLog::Warning( QStringLiteral( "[MeshIO] Material not found: '%1'" ).arg( cPath ) );
+            return {};
          }
+         
+         QImageReader reader( cPath );
+         
+         QImage   textureImage = reader.read();
+         
+         mat = ccMaterial::Shared( new ccMaterial( inName ) );
+         mat->setTexture( textureImage, cPath, false );
       }
       
-      return materialSet;
+      return mat;
    }
    
    ccMaterialSet *createMaterialSetForMesh( const aiMesh *inMesh, const QString &inPath, unsigned int inNumMaterial, aiMaterial **inMaterials)
@@ -79,7 +70,6 @@ namespace mioUtils
       }
       
       aiString name = material->GetName();
-      
       aiString texturePath;
       
       // we only handle the diffuse material for now
@@ -88,25 +78,16 @@ namespace mioUtils
          return nullptr;
       }
       
-      const QString cPath = QStringLiteral( "%1/%2" ).arg( inPath, texturePath.C_Str() );
+      auto mat = _createMaterial( inPath, name.C_Str(), texturePath.C_Str() );
       
-      if ( !QFile::exists( cPath ) )
+      if ( mat.isNull() )
       {
-         ccLog::Warning( QStringLiteral( "[MeshIO] Material not found: '%1'" ).arg( cPath ) );
          return nullptr;
       }
       
-      QImageReader  reader( cPath );
-      
-      QImage	textureImage = reader.read();
-      
-      ccMaterial::Shared newMaterial( new ccMaterial( name.C_Str() ) );
-      
-      newMaterial->setTexture( textureImage, cPath );
-      
       ccMaterialSet *materialSet = new ccMaterialSet( "Materials" );
       
-      materialSet->addMaterial( newMaterial );
+      materialSet->addMaterial( mat );
       
       return materialSet;
    }
