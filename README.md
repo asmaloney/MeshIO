@@ -1,4 +1,7 @@
+
+[![CloudCompare Plugin](https://img.shields.io/badge/plugin-CloudCompare-brightgreen.svg)](https://github.com/CloudCompare/CloudCompare)
 [![License](https://img.shields.io/badge/License-BSD%203--Clause-blue.svg)](https://opensource.org/licenses/BSD-3-Clause)
+
 # MeshIO
 
 This is a plugin for [CloudCompare](https://github.com/CloudCompare/CloudCompare) for reading 3D model files (meshes). It uses the [Open Asset Import Library](https://github.com/assimp/assimp) (Assimp).
