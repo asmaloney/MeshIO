@@ -13,7 +13,7 @@ QStringList IFCFilter::getFileFilters( bool onImport ) const
    {
       // import
       return {
-         QStringLiteral( "MeshIO - IFC file (*.ifc)" ),
+         QStringLiteral( "MeshIO - IFC file (*.ifc *.stp *.step)" ),
       };
    }
    else
@@ -32,6 +32,8 @@ bool IFCFilter::canLoadExtension( const QString &inUpperCaseExt ) const
 {
    const QStringList extensions{
       "IFC",
+      "STP",
+      "STEP",
    };
    
    return extensions.contains( inUpperCaseExt );

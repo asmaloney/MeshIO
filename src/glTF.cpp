@@ -13,7 +13,7 @@ QStringList glTFFilter::getFileFilters( bool onImport ) const
    {
       // import
       return {
-         QStringLiteral( "MeshIO - glTF file (*.gltf)" ),
+         QStringLiteral( "MeshIO - glTF file (*.gltf *.glb)" ),
       };
    }
    else
@@ -32,6 +32,7 @@ bool glTFFilter::canLoadExtension( const QString &inUpperCaseExt ) const
 {
    const QStringList extensions{
       "GLTF",
+      "GLB",
    };
    
    return extensions.contains( inUpperCaseExt );
