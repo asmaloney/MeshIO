@@ -202,12 +202,12 @@ class _Loader
    
    void	_pruneTree( ccHObject *ioCurrentObject )
    {
-      const auto    cChildCount = ioCurrentObject->getChildrenNumber();
+      auto    childCount = ioCurrentObject->getChildrenNumber();
       
       std::vector<ccHObject *>	children;
       
       // Because the indices change when we delete children, save a list and process that instead
-      for ( unsigned int i = 0; i < cChildCount; ++i )
+      for ( unsigned int i = 0; i < childCount; ++i )
       {
          children.push_back( ioCurrentObject->getChild( i ) );
       }
@@ -231,18 +231,22 @@ class _Loader
          return;
       }
       
+      // Our child count will be different now if we deleted some objects
+      childCount = ioCurrentObject->getChildrenNumber();;
+      
       // If we don't have children, then we can be pruned
-      if ( cChildCount == 0 )
+      if ( childCount == 0 )
       {
 #ifdef QT_DEBUG
-         //			std::cout << "pruning: " << ioCurrentObject->getName().toLatin1().constData() << std::endl;
+         std::cout << "pruning: " << ioCurrentObject->getName().toLatin1().constData()
+                   << "  from parent: " << parent->getName().toLatin1().constData() << std::endl;
 #endif
          
          parent->detachChild( ioCurrentObject );
          
          delete ioCurrentObject;
       }
-      else if ( (cChildCount == 1) &&
+      else if ( (childCount == 1) &&
                 ioCurrentObject->metaData().empty() )
       {
          // If we have one child, and it doesn't have useful data,
