@@ -80,7 +80,7 @@ void IFCFilter::_recursiveRename( ccHObject *ioContainer )
          const QString cName = match.captured( "name" );
          const QString cGUID = match.captured( "guid" );
          
-         ioContainer->setMetaData( "type", cType );
+         ioContainer->setMetaData( "Type", cType );
          ioContainer->setMetaData( "GUID", cGUID );
          
          ioContainer->setName( cName );
