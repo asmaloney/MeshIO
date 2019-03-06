@@ -342,6 +342,9 @@ CC_FILE_ERROR mioAbstractLoader::loadFile( const QString &inFileName, ccHObject 
    
    Assimp::DefaultLogger::kill();
    
+   // allow individual loaders to do some processing on the results
+   _postProcess( ioContainer );
+   
    return CC_FERR_NO_ERROR;
 }
 
@@ -352,4 +355,9 @@ bool mioAbstractLoader::canSave( CC_CLASS_ENUM type, bool &multiple, bool &exclu
    Q_UNUSED( exclusive );
    
    return false;
+}
+
+void mioAbstractLoader::_postProcess( ccHObject &ioContainer )
+{
+   Q_UNUSED( ioContainer );
 }

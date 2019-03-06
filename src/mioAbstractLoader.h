@@ -20,6 +20,9 @@ class mioAbstractLoader : public FileIOFilter
    
    bool canLoadExtension( const QString &inUpperCaseExt ) const override = 0;
    bool canSave( CC_CLASS_ENUM inType, bool &outMultiple, bool &outExclusive ) const override;
+   
+ protected:
+   virtual void _postProcess( ccHObject &ioContainer );
 };
 
 #endif
