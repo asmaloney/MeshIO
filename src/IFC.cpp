@@ -1,6 +1,7 @@
 // MeshIO Copyright © 2019 Andy Maloney <asmaloney@gmail.com>
 // SPDX-License-Identifier: BSD-3-Clause
 
+#include <QCoreApplication>
 #include <QString>
 
 #include "IFC.h"
@@ -57,24 +58,32 @@ void IFCFilter::_recursiveRename( ccHObject *ioContainer )
    {
       _recursiveRename( ioContainer->getChild( i ) );
    }
-    
-   auto match = mNameMatcher.match( ioContainer->getName() );
    
-   if ( match.hasMatch() )
+   if ( ioContainer->getName() == QLatin1String( "$RelAggregates" ) )
    {
-      // Split names of the form:
-      //    IfcBeam_Holzbalken-4_1X4dAmiW97Nurao$8fngpg
-      // into type, name, and GUID:
-      //    IfcBeam, Holzbalken-4, 1X4dAmiW97Nurao$8fngpg
-      // Then rename our node with "name" put "type" and "GUID" into our meta data
+       
+      ioContainer->setName( QCoreApplication::translate( "MeshIO", "Unnamed Group" ) );
+   }
+   else
+   {
+      auto match = mNameMatcher.match( ioContainer->getName() );
       
-      const QString cType = match.captured( "type" );
-      const QString cName = match.captured( "name" );
-      const QString cGUID = match.captured( "guid" );
-      
-      ioContainer->setMetaData( "type", cType );
-      ioContainer->setMetaData( "GUID", cGUID );
-      
-      ioContainer->setName( cName );
+      if ( match.hasMatch() )
+      {
+         // Split names of the form:
+         //    IfcBeam_Holzbalken-4_1X4dAmiW97Nurao$8fngpg
+         // into type, name, and GUID:
+         //    IfcBeam, Holzbalken-4, 1X4dAmiW97Nurao$8fngpg
+         // Then rename our node with "name" put "type" and "GUID" into our meta data
+         
+         const QString cType = match.captured( "type" );
+         const QString cName = match.captured( "name" );
+         const QString cGUID = match.captured( "guid" );
+         
+         ioContainer->setMetaData( "type", cType );
+         ioContainer->setMetaData( "GUID", cGUID );
+         
+         ioContainer->setName( cName );
+      }
    }
 }
