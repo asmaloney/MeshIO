@@ -125,11 +125,17 @@ class _Loader
       }
    }
    
-   void	_recursiveAddNode( const aiNode *inNode, const aiScene *inScene, ccHObject *ioCurrentObject )
+   void	_recursiveAddNode( const aiNode *inNode, const aiScene *inScene, ccHObject *ioParentObject )
    {
-      //	std::cout << "Process node: " << inNode->mName.C_Str() << std::endl;
-      //	std::cout << "  num children: " << inNode->mNumChildren << std::endl;
-      //	std::cout << "  num meshes: " << inNode->mNumMeshes << std::endl;
+#ifdef QT_DEBUG
+      std::cout << "Process node: " << inNode->mName.C_Str() << std::endl;
+      std::cout << "  num children: " << inNode->mNumChildren << std::endl;
+      std::cout << "  num meshes: " << inNode->mNumMeshes << std::endl;
+#endif
+      
+      auto currentObject = new ccHObject( inNode->mName.C_Str() );
+      
+      ioParentObject->addChild( currentObject );
       
       const bool    cNodeHasTransform = !inNode->mTransformation.IsIdentity();
       
@@ -137,66 +143,54 @@ class _Loader
       {
          ccGLMatrix	transform = mioUtils::convertMatrix( inNode->mTransformation );
          
-         ioCurrentObject->setGLTransformation( transform );
+         currentObject->setGLTransformation( transform );
       }
       
+      // meshes
+      for ( unsigned int j = 0; j < inNode->mNumMeshes; ++j )
+      {
+         const auto	cMeshIndex = inNode->mMeshes[j];
+         const auto	mesh = inScene->mMeshes[cMeshIndex];
+         
+         ccMesh  *newMesh = mioUtils::newCCMeshFromAIMesh( mesh );
+         
+         if ( newMesh == nullptr )
+         {
+            continue;
+         }
+         
+         auto    materialSet = mioUtils::createMaterialSetForMesh( mesh, cPath, inScene->mNumMaterials, inScene->mMaterials );
+         
+         if ( materialSet != nullptr )
+         {
+            newMesh->setMaterialSet( materialSet );
+            newMesh->showMaterials( true );
+         }
+         
+         currentObject->addChild( newMesh );
+      }
+      
+      // metadata
+      if ( inNode->mMetaData != nullptr )
+      {
+         const auto	data = inNode->mMetaData;
+         
+         for ( unsigned int i = 0; i < data->mNumProperties; ++i )
+         {
+            const auto   cMetaKey = data->mKeys[i].C_Str();
+            QVariant     metaValue = mioUtils::convertMetaValueToVariant( data, i );
+            
+            std::cout << "Setting meta: " << cMetaKey << " = " << metaValue.toString().toLatin1().constData() << std::endl;
+            
+            currentObject->setMetaData( cMetaKey, metaValue );
+         }
+      }
+            
       for ( unsigned int i = 0; i < inNode->mNumChildren; ++i )
       {
          const auto     cChild = inNode->mChildren[i];
-         const QString	cChildName( cChild->mName.C_Str() );
          
-         auto	childObject = ioCurrentObject;
-         
-         // If we only have one child, and it does not contain a transform, collapse this node
-         // TODO Add a tree walk and be smarter about cleaning up the empty nodes
-         if ( (cChild->mNumChildren != 1) || !cChild->mTransformation.IsIdentity() )
-         {
-            childObject = new ccHObject( cChildName );
-            
-            ioCurrentObject->addChild( childObject );
-         }
-         
-         // meshes
-         for ( unsigned int j = 0; j < cChild->mNumMeshes; ++j )
-         {
-            const auto	cMeshIndex = cChild->mMeshes[j];
-            const auto	mesh = inScene->mMeshes[cMeshIndex];
-            
-            ccMesh  *newMesh = mioUtils::newCCMeshFromAIMesh( mesh );
-            
-            if ( newMesh == nullptr )
-            {
-               continue;
-            }
-            
-            auto    materialSet = mioUtils::createMaterialSetForMesh( mesh, cPath, inScene->mNumMaterials, inScene->mMaterials );
-            
-            if ( materialSet != nullptr )
-            {
-               newMesh->setMaterialSet( materialSet );
-               newMesh->showMaterials( true );
-            }
-            
-            childObject->addChild( newMesh );
-         }
-         
-         // metadata
-         if ( cChild->mMetaData != nullptr )
-         {
-            const auto	data = cChild->mMetaData;
-            
-            for ( unsigned int i = 0; i < data->mNumProperties; ++i )
-            {
-               const auto   cMetaKey = data->mKeys[i].C_Str();
-               QVariant     metaValue = mioUtils::convertMetaValueToVariant( data, i );
-               
-               std::cout << "Setting meta: " << cMetaKey << " = " << metaValue.toString().toLatin1().constData() << std::endl;
-               
-               childObject->setMetaData( cMetaKey, metaValue );
-            }
-         }
-         
-         _recursiveAddNode( cChild, inScene, childObject );
+         _recursiveAddNode( cChild, inScene, currentObject );
       }
    }
    
