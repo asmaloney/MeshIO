@@ -1,7 +1,11 @@
 # MeshIO
-[CloudCompare](https://github.com/CloudCompare/CloudCompare) plugin for loading COLLADA, glTF, and IFC meshes.
 
-This is a plugin for [CloudCompare](https://github.com/CloudCompare/CloudCompare) to add reading of COLLADA, glTF, and IFC meshes. It uses the [Open Asset Import Library](https://github.com/assimp/assimp) (Assimp).
+This is a plugin for [CloudCompare](https://github.com/CloudCompare/CloudCompare) for reading 3D model files (meshes). It uses the [Open Asset Import Library](https://github.com/assimp/assimp) (Assimp).
+
+Currently MeshIO supports reading the following formats:
+* [COLLADA](https://en.wikipedia.org/wiki/COLLADA) (\*.dae)
+* [glTF](https://en.wikipedia.org/wiki/GlTF) (\*.gltf \*.glb)
+* [IFC-SPF](https://en.wikipedia.org/wiki/ISO_10303-21) a.k.a STEP (\*.ifc \*.stp \*.step)
 
 ## Building
 
@@ -13,7 +17,7 @@ This is a plugin for [CloudCompare](https://github.com/CloudCompare/CloudCompare
 
 ## Caveat
 
-This plugin is using another library to read these file formats. There will be problems with some files (e.g. IFC is not 100% implemented). It also means that some mesh names might be lost when importing some formats.
+This plugin is using another library to read these file formats. There will be problems with some files (e.g. IFC-SPF is not 100% implemented). It also means that some mesh names might be lost when importing some formats.
 
 Because this plugin is basically translating the Assimp data into something CloudCompare understands, it can be tricky to figure out where the problem lies.
 
