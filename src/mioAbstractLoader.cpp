@@ -159,7 +159,7 @@ class _Loader
             continue;
          }
          
-         auto    materialSet = mioUtils::createMaterialSetForMesh( mesh, cPath, inScene->mNumMaterials, inScene->mMaterials );
+         auto    materialSet = mioUtils::createMaterialSetForMesh( mesh, cPath, inScene );
          
          if ( materialSet != nullptr )
          {

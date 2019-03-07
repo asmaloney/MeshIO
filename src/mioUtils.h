@@ -15,14 +15,14 @@ class ccGLMatrix;
 class ccMaterialSet;
 class ccMesh;
 
-class aiMaterial;
 class aiMesh;
 class aiMetadata;
+class aiScene;
 
 
 namespace mioUtils
 {
-   ccMaterialSet    *createMaterialSetForMesh( const aiMesh *inMesh, const QString &inPath, unsigned int inNumMaterial, aiMaterial **inMaterials );
+   ccMaterialSet    *createMaterialSetForMesh( const aiMesh *inMesh, const QString &inPath, const aiScene *inScene );
    
    ccMesh   *newCCMeshFromAIMesh( const aiMesh *inMesh );
    

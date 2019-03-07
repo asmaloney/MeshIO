@@ -13,56 +13,77 @@
 #include "assimp/material.h"
 #include "assimp/mesh.h"
 #include "assimp/metadata.h"
+#include "assimp/scene.h"
 
 #include "mioUtils.h"
 
 
 namespace mioUtils
 {
-   ccMaterial::Shared   _createMaterial( const QString &inPath, const QString &inName, const QString &inTexturePath )
+   ccMaterial::Shared   _createMaterialFromEmbeddedTexture( const QString &inName, unsigned int inTextureIndex, const aiScene *inScene )
    {
-      static QRegularExpression sRegExp( "^\\*(?<index>[0-9]+)$" );
-            
       ccMaterial::Shared mat;
       
-      auto  match = sRegExp.match( inTexturePath );
-            
-      if ( match.hasMatch() )
+      if ( inScene->mNumTextures == 0 )
       {
-         const QString cIndex = match.captured( "index" );
-                  
-         ccLog::Warning( QStringLiteral( "[MeshIO] Embedded materials not yet handled" ) );
+         ccLog::Warning( QStringLiteral( "[MeshIO] Scene requests embedded texture, but there are none" ) );
+         return mat;
       }
-      else
+      
+      auto  texture = inScene->mTextures[inTextureIndex];
+      
+      // From assimp: "If mHeight is zero the texture is compressed"
+      bool  isCompressed = (texture->mHeight == 0);
+      
+      if ( !isCompressed )
       {
-         const QString    cPath = QStringLiteral( "%1/%2" ).arg( inPath, inTexturePath );
-         
-         if ( !QFile::exists( cPath ) )
-         {
-            ccLog::Warning( QStringLiteral( "[MeshIO] Material not found: '%1'" ).arg( cPath ) );
-            return {};
-         }
-         
-         QImageReader reader( cPath );
-         
-         QImage   textureImage = reader.read();
-         
-         mat = ccMaterial::Shared( new ccMaterial( inName ) );
-         mat->setTexture( textureImage, cPath, false );
+         ccLog::Warning( QStringLiteral( "[MeshIO] Uncompressed embedded textures not yet implemented" ) );
+         return mat;
       }
+      
+      // From assimp: "mWidth specifies the size of the memory area pcData is pointing to, in bytes"
+      auto  dataSize = static_cast<const int32_t>(texture->mWidth);
+      
+      const QByteArray  imageDataByteArray( reinterpret_cast<const char *>(texture->pcData), dataSize );
+      
+      QImage    textureImage = QImage::fromData( imageDataByteArray );
+      
+      mat = ccMaterial::Shared( new ccMaterial( inName ) );
+      
+      mat->setTexture( textureImage, QCoreApplication::translate( "MeshIO", "Embedded Texture" ) );
       
       return mat;
    }
    
-   ccMaterialSet *createMaterialSetForMesh( const aiMesh *inMesh, const QString &inPath, unsigned int inNumMaterial, aiMaterial **inMaterials)
+   ccMaterial::Shared   _createMaterialFromFile( const QString &inPath, const QString &inName, const QString &inTexturePath )
    {
-      if ( inNumMaterial == 0 )
+      const QString    cPath = QStringLiteral( "%1/%2" ).arg( inPath, inTexturePath );
+      
+      if ( !QFile::exists( cPath ) )
+      {
+         ccLog::Warning( QStringLiteral( "[MeshIO] Material not found: '%1'" ).arg( cPath ) );
+         return {};
+      }
+      
+      QImageReader  reader( cPath );
+      QImage        textureImage = reader.read();
+      
+      auto mat = ccMaterial::Shared( new ccMaterial( inName ) );
+      
+      mat->setTexture( textureImage, cPath );
+      
+      return mat;
+   }
+   
+   ccMaterialSet *createMaterialSetForMesh( const aiMesh *inMesh, const QString &inPath, const aiScene *inScene )
+   {
+      if ( inScene->mNumMaterials == 0 )
       {
          return nullptr;
       }
       
       unsigned int  index = inMesh->mMaterialIndex;
-      const auto    material = inMaterials[index];
+      const auto    material = inScene->mMaterials[index];
       
       if ( material->GetTextureCount( aiTextureType_DIFFUSE ) == 0 )
       {
@@ -78,7 +99,22 @@ namespace mioUtils
          return nullptr;
       }
       
-      auto mat = _createMaterial( inPath, name.C_Str(), texturePath.C_Str() );
+      static QRegularExpression sRegExp( "^\\*(?<index>[0-9]+)$" );
+      
+      ccMaterial::Shared mat;
+      
+      auto  match = sRegExp.match( texturePath.C_Str() );
+      
+      if ( match.hasMatch() )
+      {
+         const QString cIndex = match.captured( "index" );
+         
+         mat = _createMaterialFromEmbeddedTexture( name.C_Str(), cIndex.toUInt(), inScene );
+      }
+      else
+      {
+         mat = _createMaterialFromFile( inPath, name.C_Str(), texturePath.C_Str() );
+      }
       
       if ( mat.isNull() )
       {
