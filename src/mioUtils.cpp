@@ -20,14 +20,14 @@
 
 namespace mioUtils
 {
-   ccMaterial::Shared   _createMaterialFromEmbeddedTexture( const QString &inName, unsigned int inTextureIndex, const aiScene *inScene )
+   static QImage   _getEmbeddedTexture( unsigned int inTextureIndex, const aiScene *inScene )
    {
-      ccMaterial::Shared mat;
+      QImage    image;
       
       if ( inScene->mNumTextures == 0 )
       {
          ccLog::Warning( QStringLiteral( "[MeshIO] Scene requests embedded texture, but there are none" ) );
-         return mat;
+         return image;
       }
       
       auto  texture = inScene->mTextures[inTextureIndex];
@@ -38,7 +38,7 @@ namespace mioUtils
       if ( !isCompressed )
       {
          ccLog::Warning( QStringLiteral( "[MeshIO] Uncompressed embedded textures not yet implemented" ) );
-         return mat;
+         return image;
       }
       
       // From assimp: "mWidth specifies the size of the memory area pcData is pointing to, in bytes"
@@ -46,16 +46,10 @@ namespace mioUtils
       
       const QByteArray  imageDataByteArray( reinterpret_cast<const char *>(texture->pcData), dataSize );
       
-      QImage    textureImage = QImage::fromData( imageDataByteArray );
-      
-      mat = ccMaterial::Shared( new ccMaterial( inName ) );
-      
-      mat->setTexture( textureImage, QCoreApplication::translate( "MeshIO", "Embedded Texture" ) );
-      
-      return mat;
+      return QImage::fromData( imageDataByteArray );
    }
    
-   ccMaterial::Shared   _createMaterialFromFile( const QString &inPath, const QString &inName, const QString &inTexturePath )
+   static QImage   _getTextureFromFile( const QString &inPath, const QString &inTexturePath )
    {
       const QString    cPath = QStringLiteral( "%1/%2" ).arg( inPath, inTexturePath );
       
@@ -66,13 +60,51 @@ namespace mioUtils
       }
       
       QImageReader  reader( cPath );
-      QImage        textureImage = reader.read();
       
-      auto mat = ccMaterial::Shared( new ccMaterial( inName ) );
+      return reader.read();
+   }
+   
+   inline ccColor::Rgbaf   _convertColour( const aiColor4D &inColour )
+   {
+      return ccColor::Rgbaf{ inColour.r, inColour.g, inColour.b, inColour.a };
+   }
+   
+   // Map all the material properties we know about from assimp
+   static void _assignMaterialProperties( aiMaterial *inAIMaterial, ccMaterial::Shared &inCCMaterial )
+   {
+      aiColor4D colour;
       
-      mat->setTexture( textureImage, cPath );
+      if ( inAIMaterial->Get( AI_MATKEY_COLOR_DIFFUSE, colour ) == AI_SUCCESS )
+      {
+         inCCMaterial->setDiffuse( _convertColour( colour ) );
+      }
       
-      return mat;
+      if ( inAIMaterial->Get( AI_MATKEY_COLOR_AMBIENT, colour ) == AI_SUCCESS )
+      {
+         inCCMaterial->setAmbient( _convertColour( colour ) );
+      }
+      
+      if ( inAIMaterial->Get( AI_MATKEY_COLOR_SPECULAR, colour ) == AI_SUCCESS )
+      {
+         inCCMaterial->setSpecular( _convertColour( colour ) );
+      }
+      
+      if ( inAIMaterial->Get( AI_MATKEY_COLOR_EMISSIVE, colour ) == AI_SUCCESS )
+      {
+         inCCMaterial->setEmission( _convertColour( colour ) );
+      }
+      
+      ai_real   property;
+      
+      if ( inAIMaterial->Get( AI_MATKEY_SHININESS, property ) == AI_SUCCESS )
+      {
+         inCCMaterial->setShininess( property );
+      }
+      
+      if ( inAIMaterial->Get( AI_MATKEY_OPACITY, property ) == AI_SUCCESS )
+      {
+         inCCMaterial->setTransparency( property );
+      }
    }
    
    ccMaterialSet *createMaterialSetForMesh( const aiMesh *inMesh, const QString &inPath, const aiScene *inScene )
@@ -83,47 +115,56 @@ namespace mioUtils
       }
       
       unsigned int  index = inMesh->mMaterialIndex;
-      const auto    material = inScene->mMaterials[index];
+      const auto    aiMaterial = inScene->mMaterials[index];
       
-      if ( material->GetTextureCount( aiTextureType_DIFFUSE ) == 0 )
+      const aiString  cName = aiMaterial->GetName();
+      
+      auto newMaterial = ccMaterial::Shared( new ccMaterial( cName.C_Str() ) );
+      
+      ccLog::PrintDebug( QStringLiteral( "[MeshIO] Creating material '%1'" ).arg( newMaterial->getName() ) );
+      
+      // we only handle the diffuse texture for now
+      if ( aiMaterial->GetTextureCount( aiTextureType_DIFFUSE ) > 0 )
       {
-         return nullptr;
-      }
-      
-      aiString name = material->GetName();
-      aiString texturePath;
-      
-      // we only handle the diffuse material for now
-      if ( material->GetTexture( aiTextureType_DIFFUSE, 0, &texturePath ) != AI_SUCCESS )
-      {
-         return nullptr;
-      }
-      
-      static QRegularExpression sRegExp( "^\\*(?<index>[0-9]+)$" );
-      
-      ccMaterial::Shared mat;
-      
-      auto  match = sRegExp.match( texturePath.C_Str() );
-      
-      if ( match.hasMatch() )
-      {
-         const QString cIndex = match.captured( "index" );
+         aiString texturePath;
          
-         mat = _createMaterialFromEmbeddedTexture( name.C_Str(), cIndex.toUInt(), inScene );
-      }
-      else
-      {
-         mat = _createMaterialFromFile( inPath, name.C_Str(), texturePath.C_Str() );
+         if ( aiMaterial->GetTexture( aiTextureType_DIFFUSE, 0, &texturePath ) != AI_SUCCESS )
+         {
+            ccLog::Warning( QStringLiteral( "[MeshIO] Could not get texture path" ) );
+         }
+         else
+         {
+            static QRegularExpression sRegExp( "^\\*(?<index>[0-9]+)$" );
+            
+            auto  match = sRegExp.match( texturePath.C_Str() );
+            
+            QImage  image;
+            QString path;
+            
+            if ( match.hasMatch() )
+            {
+               const QString cIndex = match.captured( "index" );
+               
+               image = _getEmbeddedTexture( cIndex.toUInt(), inScene );
+            }
+            else
+            {
+               image = _getTextureFromFile( inPath, texturePath.C_Str() );
+               path = QStringLiteral( "%1/%2" ).arg( inPath, texturePath.C_Str() );
+            }
+            
+            if ( !image.isNull() )
+            {
+               newMaterial->setTexture( image, path );
+            }
+         }
       }
       
-      if ( mat.isNull() )
-      {
-         return nullptr;
-      }
+      _assignMaterialProperties( aiMaterial, newMaterial );
       
       ccMaterialSet *materialSet = new ccMaterialSet( "Materials" );
       
-      materialSet->addMaterial( mat );
+      materialSet->addMaterial( newMaterial );
       
       return materialSet;
    }
