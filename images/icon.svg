@@ -1,184 +1,120 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!-- Created with Inkscape (http://www.inkscape.org/) -->
+
 <svg
-    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-    xmlns="http://www.w3.org/2000/svg"
-    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
-    xmlns:cc="http://creativecommons.org/ns#"
-    xmlns:xlink="http://www.w3.org/1999/xlink"
-    xmlns:dc="http://purl.org/dc/elements/1.1/"
-    xmlns:svg="http://www.w3.org/2000/svg"
-    xmlns:ns1="http://sozi.baierouge.fr"
-    id="svg2"
-    sodipodi:docname="Peileppe_3d_cubes.svg"
-    viewBox="0 0 15 16"
-    version="1.0"
-    inkscape:version="0.48.2 r9819"
-  >
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   id="svg2"
+   sodipodi:docname="icon.svg"
+   viewBox="0 0 32 32"
+   version="1.0"
+   inkscape:version="0.92.2 5c3e80d, 2017-08-06">
+  <defs
+     id="defs12" />
   <sodipodi:namedview
-      id="namedview3845"
-      fit-margin-left="0"
-      inkscape:zoom="11.313708"
-      borderopacity="1"
-      inkscape:current-layer="svg2"
-      inkscape:cx="-0.30566749"
-      inkscape:cy="-0.10290627"
-      inkscape:window-maximized="0"
-      showgrid="false"
-      fit-margin-right="0"
-      bordercolor="#666666"
-      inkscape:window-x="125"
-      guidetolerance="10"
-      objecttolerance="10"
-      inkscape:window-y="224"
-      fit-margin-bottom="0"
-      inkscape:window-width="1039"
-      inkscape:pageopacity="0"
-      inkscape:pageshadow="2"
-      pagecolor="#ffffff"
-      gridtolerance="10"
-      inkscape:window-height="909"
-      fit-margin-top="0"
-    >
+     id="namedview3845"
+     fit-margin-left="0"
+     inkscape:zoom="11.313708"
+     borderopacity="1"
+     inkscape:current-layer="svg2"
+     inkscape:cx="13.21775"
+     inkscape:cy="3.4326278"
+     inkscape:window-maximized="0"
+     showgrid="false"
+     fit-margin-right="0"
+     bordercolor="#666666"
+     inkscape:window-x="68"
+     guidetolerance="10"
+     objecttolerance="10"
+     inkscape:window-y="10"
+     fit-margin-bottom="0"
+     inkscape:window-width="1039"
+     inkscape:pageopacity="0"
+     inkscape:pageshadow="2"
+     pagecolor="#ffffff"
+     gridtolerance="10"
+     inkscape:window-height="909"
+     fit-margin-top="0">
     <inkscape:grid
-        id="grid3863"
-        enabled="true"
-        visible="true"
-        snapvisiblegridlinesonly="true"
-        type="xygrid"
-        empspacing="5"
-    />
-  </sodipodi:namedview
-  >
+       id="grid3863"
+       enabled="true"
+       visible="true"
+       snapvisiblegridlinesonly="true"
+       type="xygrid"
+       empspacing="5"
+       originx="0"
+       originy="0" />
+  </sodipodi:namedview>
   <g
-      id="g3867"
-      transform="translate(0 -9.351)"
-    >
+     id="g3867"
+     transform="matrix(1.8131728,0,0,1.7954952,2.401204,-15.153637)">
     <path
-        id="path3865"
-        d="m0 11.851 7.5-2.5 7.5 2.5v8l-7.5091 5.5-7.4909-5.5z"
-        sodipodi:nodetypes="ccccccc"
-        style="fill:#2a2a2a"
-        inkscape:connector-curvature="0"
-    />
+       id="path3865"
+       d="m 0,11.851 7.5,-2.5 7.5,2.5 v 8 L 7.4909,25.351 0,19.851 Z"
+       sodipodi:nodetypes="ccccccc"
+       style="fill:#2a2a2a"
+       inkscape:connector-curvature="0" />
     <path
-        id="path2475"
-        inkscape:connector-curvature="0"
-        sodipodi:nodetypes="ccccc"
-        style="fill:#fe4000"
-        d="m14 13.351v6.0221l-6 3.9779v-6z"
-    />
+       id="path2475"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="ccccc"
+       style="fill:#fe4000"
+       d="m 14,13.351 v 6.0221 L 8,23.351 v -6 z" />
     <path
-        id="path2471"
-        inkscape:connector-curvature="0"
-        sodipodi:nodetypes="ccccc"
-        style="fill:#51fc47"
-        d="m1 13.351 6 4v6l-6-4z"
-    />
+       id="path2471"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="ccccc"
+       style="fill:#51fc47"
+       d="m 1,13.351 6,4 v 6 l -6,-4 z" />
     <path
-        id="path2473"
-        inkscape:connector-curvature="0"
-        sodipodi:nodetypes="ccccc"
-        style="fill:#2abefc"
-        d="m7.5 10.351 6.5 2-6.5 4-6.5-4z"
-    />
-  </g
-  >
+       id="path2473"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="ccccc"
+       style="fill:#2abefc"
+       d="m 7.5,10.351 6.5,2 -6.5,4 -6.5,-4 z" />
+  </g>
   <metadata
-    >
-    <rdf:RDF
-      >
-      <cc:Work
-        >
-        <dc:format
-          >image/svg+xml</dc:format
-        >
+     id="metadata9">
+    <rdf:RDF>
+      <cc:Work>
+        <dc:format>image/svg+xml</dc:format>
         <dc:type
-            rdf:resource="http://purl.org/dc/dcmitype/StillImage"
-        />
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
         <cc:license
-            rdf:resource="http://creativecommons.org/licenses/publicdomain/"
-        />
-        <dc:publisher
-          >
+           rdf:resource="http://creativecommons.org/publicdomain/zero/1.0/" />
+        <dc:publisher>
           <cc:Agent
-              rdf:about="http://openclipart.org/"
-            >
-            <dc:title
-              >Openclipart</dc:title
-            >
-          </cc:Agent
-          >
-        </dc:publisher
-        >
-        <dc:title
-          >3D Cube Icon</dc:title
-        >
-        <dc:date
-          >2012-02-15T10:08:47</dc:date
-        >
-        <dc:description
-        />
-        <dc:source
-          >https://openclipart.org/detail/168258/3d-cube-icon-by-qubodup</dc:source
-        >
-        <dc:creator
-          >
-          <cc:Agent
-            >
-            <dc:title
-              >qubodup</dc:title
-            >
-          </cc:Agent
-          >
-        </dc:creator
-        >
-        <dc:subject
-          >
-          <rdf:Bag
-            >
-            <rdf:li
-              >3d</rdf:li
-            >
-            <rdf:li
-              >color</rdf:li
-            >
-            <rdf:li
-              >cube</rdf:li
-            >
-            <rdf:li
-              >icon</rdf:li
-            >
-            <rdf:li
-              >symbol</rdf:li
-            >
-            <rdf:li
-              >wÃ¼rfel</rdf:li
-            >
-          </rdf:Bag
-          >
-        </dc:subject
-        >
-      </cc:Work
-      >
+             rdf:about="http://openclipart.org/">
+            <dc:title>Openclipart</dc:title>
+          </cc:Agent>
+        </dc:publisher>
+        <dc:title></dc:title>
+        <dc:date>2012-02-15T10:08:47</dc:date>
+        <dc:description />
+        <dc:source>https://openclipart.org/detail/168258/3d-cube-icon-by-qubodup</dc:source>
+        <dc:creator>
+          <cc:Agent>
+            <dc:title>qubodup</dc:title>
+          </cc:Agent>
+        </dc:creator>
+        <dc:subject>
+          <rdf:Bag />
+        </dc:subject>
+      </cc:Work>
       <cc:License
-          rdf:about="http://creativecommons.org/licenses/publicdomain/"
-        >
+         rdf:about="http://creativecommons.org/publicdomain/zero/1.0/">
         <cc:permits
-            rdf:resource="http://creativecommons.org/ns#Reproduction"
-        />
+           rdf:resource="http://creativecommons.org/ns#Reproduction" />
         <cc:permits
-            rdf:resource="http://creativecommons.org/ns#Distribution"
-        />
+           rdf:resource="http://creativecommons.org/ns#Distribution" />
         <cc:permits
-            rdf:resource="http://creativecommons.org/ns#DerivativeWorks"
-        />
-      </cc:License
-      >
-    </rdf:RDF
-    >
-  </metadata
-  >
-</svg
->
+           rdf:resource="http://creativecommons.org/ns#DerivativeWorks" />
+      </cc:License>
+    </rdf:RDF>
+  </metadata>
+</svg>

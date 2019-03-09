@@ -2,7 +2,7 @@
 [![CloudCompare Plugin](https://img.shields.io/badge/plugin-CloudCompare-brightgreen.svg)](https://github.com/CloudCompare/CloudCompare)
 [![License](https://img.shields.io/badge/License-BSD%203--Clause-blue.svg)](https://opensource.org/licenses/BSD-3-Clause)
 
-# MeshIO
+# <img src="https://github.com/asmaloney/MeshIO/blob/master/images/icon.png"/> MeshIO
 
 This is a plugin for [CloudCompare](https://github.com/CloudCompare/CloudCompare) for reading 3D model files (meshes). It uses the [Open Asset Import Library](https://github.com/assimp/assimp) (Assimp).
 
@@ -26,6 +26,10 @@ This plugin is using another library to read these file formats. There will be p
 Because this plugin is basically translating the Assimp data into something CloudCompare understands, it can be tricky to figure out where the problem lies.
 
 If you find files that do not work as expected, please add an [issue here](https://github.com/asmaloney/MeshIO/issues) and attach the smallest example you have that isn't working. I will try to assess where the problem lies and either report it to the [Assimp](https://github.com/assimp/assimp) project or [CloudCompare](https://github.com/CloudCompare/CloudCompare) project as necessary.
+
+## Icon
+
+The icon is by [qubodup](https://openclipart.org/detail/168258/3d-cube-icon) (Public Domain).
 
 ## License
 This project is licensed under the BSD 3-Clause license - see [LICENSE](https://github.com/asmaloney/MeshIO/blob/master/LICENSE) file for details.
