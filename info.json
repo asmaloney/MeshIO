@@ -17,7 +17,7 @@
 	],
 	"references" : [
 		{
-			"text" : "The Open Asset Import Library library",
+			"text" : "MeshIO uses the Open Asset Import Library library",
 			"url" : "https://github.com/assimp/assimp"
 		},
 		{
