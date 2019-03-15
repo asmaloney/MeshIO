@@ -180,8 +180,10 @@ class _Loader
             const auto   cMetaKey = data->mKeys[i].C_Str();
             QVariant     metaValue = mioUtils::convertMetaValueToVariant( data, i );
             
+#ifdef QT_DEBUG
             std::cout << "Setting meta: " << cMetaKey << " = " << metaValue.toString().toLatin1().constData() << std::endl;
-            
+#endif
+			
             currentObject->setMetaData( cMetaKey, metaValue );
          }
       }
