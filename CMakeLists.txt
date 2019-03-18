@@ -22,8 +22,9 @@ if ( PLUGIN_MESH_IO )
 	set( ASSIMP_INSTALL_PDB FALSE CACHE INTERNAL "override ASSIMP flags" FORCE )
 	set( ASSIMP_NO_EXPORT TRUE CACHE INTERNAL "override ASSIMP flags" FORCE )
 	
-	# Turn off all exporters, then enable only the ones we want
+	# Turn off all importers and exporters, then enable only the ones we want
 	set( ASSIMP_BUILD_ALL_IMPORTERS_BY_DEFAULT FALSE CACHE INTERNAL "override ASSIMP flags" FORCE )
+	set( ASSIMP_BUILD_ALL_EXPORTERS_BY_DEFAULT FALSE CACHE INTERNAL "override ASSIMP flags" FORCE )
 	
 	set( ASSIMP_BUILD_COLLADA_IMPORTER TRUE CACHE INTERNAL "override ASSIMP flags" FORCE )
 	set( ASSIMP_BUILD_GLTF_IMPORTER TRUE CACHE INTERNAL "override ASSIMP flags" FORCE )
