@@ -3,9 +3,9 @@
 
 cmake_minimum_required( VERSION 3.0 )
 
-option( PLUGIN_MESH_IO "Check to install the MeshIO plugin" OFF )
+option( PLUGIN-3rdParty_MESH_IO "Check to install the MeshIO plugin" OFF )
 
-if ( PLUGIN_MESH_IO )
+if ( PLUGIN-3rdParty_MESH_IO )
 	project( MeshIO )
 
 	include_directories( BEFORE extern/assimp/include )
