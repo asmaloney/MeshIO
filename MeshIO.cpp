@@ -12,7 +12,7 @@
 
 MeshIO::MeshIO( QObject *parent ) :
    QObject( parent ),
-   ccIOFilterPluginInterface( ":/asmaloney/MeshIO/info.json" )
+   ccIOPluginInterface( ":/asmaloney/MeshIO/info.json" )
 {
    const QString    cAssimpVer = QStringLiteral( "[MeshIO] Using Assimp %1.%2 (%3-%4)" )
                                  .arg( QString::number( aiGetVersionMajor() ),
@@ -28,9 +28,9 @@ void MeshIO::registerCommands( ccCommandLineInterface *inCmdLine )
    Q_UNUSED( inCmdLine );
 }
 
-QVector<FileIOFilter::Shared> MeshIO::getFilters()
+ccIOPluginInterface::FilterList MeshIO::getFilters()
 {
-   return QVector<FileIOFilter::Shared>{
+   return {
       FileIOFilter::Shared( new COLLADAFilter ),
       FileIOFilter::Shared( new glTFFilter ),
       FileIOFilter::Shared( new IFCFilter ),

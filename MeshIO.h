@@ -4,15 +4,15 @@
 // Copyright © 2019 Andy Maloney <asmaloney@gmail.com>
 // SPDX-License-Identifier: BSD-3-Clause
 
-#include "ccIOFilterPluginInterface.h"
+#include "ccIOPluginInterface.h"
 
 
-class MeshIO : public QObject, public ccIOFilterPluginInterface
+class MeshIO : public QObject, public ccIOPluginInterface
 {
    Q_OBJECT
-   Q_INTERFACES( ccIOFilterPluginInterface )
+   Q_INTERFACES( ccIOPluginInterface )
    
-   Q_PLUGIN_METADATA(IID "com.asmaloney.plugin.MeshIO" FILE "info.json")
+   Q_PLUGIN_METADATA( IID "com.asmaloney.plugin.MeshIO" FILE "info.json" )
    
  public:
    explicit MeshIO( QObject *parent = nullptr );
@@ -20,7 +20,7 @@ class MeshIO : public QObject, public ccIOFilterPluginInterface
  protected:
    void registerCommands( ccCommandLineInterface *inCmdLine ) override;
    
-   QVector<FileIOFilter::Shared> getFilters() override;
+   FilterList getFilters() override;
 };
 
 #endif
