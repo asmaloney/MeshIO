@@ -32,6 +32,11 @@ if ( PLUGIN-3rdParty_MESH_IO )
 	
 	add_subdirectory( extern/assimp )
 	
+	# See: https://github.com/asmaloney/MeshIO/issues/1
+	if ( AMD64 )
+		message( WARNING "The AMD64 option may cause link errors. If you run into link errors regarding 'inflate_fast', try turning this off." )
+	endif()
+	
 	include( ../../CMakePluginTpl.cmake )
 
 	target_link_libraries( ${PROJECT_NAME} assimp )
