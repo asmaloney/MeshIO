@@ -1,39 +1,18 @@
 // MeshIO Copyright © 2019 Andy Maloney <asmaloney@gmail.com>
 // SPDX-License-Identifier: BSD-3-Clause
 
-#include <QDebug>
-#include <QString>
-
 #include "glTF.h"
 
 
-QStringList glTFFilter::getFileFilters( bool onImport ) const
-{
-   if ( onImport )
-   {
-      // import
-      return {
-         QStringLiteral( "MeshIO - glTF file (*.gltf *.glb)" ),
-      };
-   }
-   else
-   {
-      // export
-      return {};
-   }
-}
-
-QString glTFFilter::getDefaultExtension() const
-{
-   return QStringLiteral( "gltf" );
-}
-
-bool glTFFilter::canLoadExtension( const QString &inUpperCaseExt ) const
-{
-   const QStringList extensions{
-      "GLTF",
-      "GLB",
-   };
-   
-   return extensions.contains( inUpperCaseExt );
+glTFFilter::glTFFilter() :
+   mioAbstractLoader( {
+      "_glTF Filter",
+      FileIOFilter::DEFAULT_PRIORITY,	// priority
+      QStringList{ "gltf", "glb" },
+      "gltf",
+      QStringList{ "MeshIO - glTF file (*.gltf *.glb)" },
+      QStringList(),
+      Import
+   } )   
+{   
 }

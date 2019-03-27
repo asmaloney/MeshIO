@@ -276,13 +276,18 @@ class _Loader
    QMap<QString, const aiCamera *>  mCameraMap;
 };
 
-bool mioAbstractLoader::importSupported() const
+
+mioAbstractLoader::mioAbstractLoader( const FileIOFilter::FilterInfo &info ) :
+   FileIOFilter( info )
 {
-   return true;
 }
 
-bool mioAbstractLoader::exportSupported() const
+bool mioAbstractLoader::canSave( CC_CLASS_ENUM type, bool &multiple, bool &exclusive ) const
 {
+   Q_UNUSED( type );
+   Q_UNUSED( multiple );
+   Q_UNUSED( exclusive );
+   
    return false;
 }
 
@@ -346,15 +351,6 @@ CC_FILE_ERROR mioAbstractLoader::loadFile( const QString &inFileName, ccHObject 
    _postProcess( ioContainer );
    
    return CC_FERR_NO_ERROR;
-}
-
-bool mioAbstractLoader::canSave( CC_CLASS_ENUM type, bool &multiple, bool &exclusive ) const
-{
-   Q_UNUSED( type );
-   Q_UNUSED( multiple );
-   Q_UNUSED( exclusive );
-   
-   return false;
 }
 
 void mioAbstractLoader::_postProcess( ccHObject &ioContainer )

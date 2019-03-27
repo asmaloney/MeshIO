@@ -8,41 +8,18 @@
 
 
 IFCFilter::IFCFilter() :
+   mioAbstractLoader( {
+      "_IFC Filter",
+      FileIOFilter::DEFAULT_PRIORITY,	// priority
+      QStringList{ "ifc", "stp", "step" },
+      "ifc",
+      QStringList{ "MeshIO - IFC file (*.ifc *.stp *.step)" },
+      QStringList(),
+      Import
+   } ),
    mNameMatcher( "^(?<type>Ifc[^_]+)_(?<name>.*)_(?<guid>.{22})$" )
 {
    mNameMatcher.optimize();
-}
-
-QStringList IFCFilter::getFileFilters( bool onImport ) const
-{
-   if ( onImport )
-   {
-      // import
-      return {
-         QStringLiteral( "MeshIO - IFC file (*.ifc *.stp *.step)" ),
-      };
-   }
-   else
-   {
-      // export
-      return {};
-   }
-}
-
-QString IFCFilter::getDefaultExtension() const
-{
-   return QStringLiteral( "ifc" );
-}
-
-bool IFCFilter::canLoadExtension( const QString &inUpperCaseExt ) const
-{
-   const QStringList extensions{
-      "IFC",
-      "STP",
-      "STEP",
-   };
-   
-   return extensions.contains( inUpperCaseExt );
 }
 
 void IFCFilter::_postProcess( ccHObject &ioContainer )

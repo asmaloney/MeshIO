@@ -14,11 +14,6 @@ class IFCFilter : public mioAbstractLoader
  public:
    IFCFilter();
    
-   QStringList getFileFilters( bool onImport ) const override;
-   QString getDefaultExtension() const override;
-   
-   bool canLoadExtension( const QString &inUpperCaseExt ) const override;
-   
  private:
    void _postProcess( ccHObject &ioContainer ) override;
    

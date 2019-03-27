@@ -10,18 +10,13 @@
 class mioAbstractLoader : public FileIOFilter
 {
  public:
-   bool importSupported() const override;
-   bool exportSupported() const override;
-   
-   CC_FILE_ERROR loadFile( const QString &inFileName, ccHObject &ioContainer, LoadParameters &inParameters ) override;
-   
-   QStringList getFileFilters( bool onImport ) const override = 0;
-   QString getDefaultExtension() const override = 0;
-   
-   bool canLoadExtension( const QString &inUpperCaseExt ) const override = 0;
    bool canSave( CC_CLASS_ENUM inType, bool &outMultiple, bool &outExclusive ) const override;
+
+   CC_FILE_ERROR loadFile( const QString &inFileName, ccHObject &ioContainer, LoadParameters &inParameters ) override;   
    
  protected:
+   explicit mioAbstractLoader( const FileIOFilter::FilterInfo &info );
+
    virtual void _postProcess( ccHObject &ioContainer );
 };
 
