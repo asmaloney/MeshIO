@@ -38,7 +38,6 @@ void IFCFilter::_recursiveRename( ccHObject *ioContainer )
    
    if ( ioContainer->getName() == QLatin1String( "$RelAggregates" ) )
    {
-       
       ioContainer->setName( QCoreApplication::translate( "MeshIO", "Unnamed Group" ) );
    }
    else
