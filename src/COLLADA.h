@@ -7,7 +7,7 @@
 #include "mioAbstractLoader.h"
 
 
-class COLLADAFilter : public mioAbstractLoader
+class COLLADAFilter final : public mioAbstractLoader
 {
  public:
    COLLADAFilter();

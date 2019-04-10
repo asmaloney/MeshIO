@@ -7,7 +7,7 @@
 #include "ccIOPluginInterface.h"
 
 
-class MeshIO : public QObject, public ccIOPluginInterface
+class MeshIO final : public QObject, public ccIOPluginInterface
 {
    Q_OBJECT
    Q_INTERFACES( ccIOPluginInterface )

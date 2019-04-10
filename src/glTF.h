@@ -7,7 +7,7 @@
 #include "mioAbstractLoader.h"
 
 
-class glTFFilter : public mioAbstractLoader
+class glTFFilter final : public mioAbstractLoader
 {
  public:
    glTFFilter();

@@ -9,7 +9,7 @@
 #include "mioAbstractLoader.h"
 
 
-class IFCFilter : public mioAbstractLoader
+class IFCFilter final : public mioAbstractLoader
 {
  public:
    IFCFilter();
