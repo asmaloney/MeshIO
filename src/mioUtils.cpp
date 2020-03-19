@@ -385,7 +385,7 @@ namespace mioUtils
             
             inData->Get<uint64_t>( inValueIndex, value );
             
-            metaValue = value;
+            metaValue = static_cast<qulonglong>( value );
             break;
          }
             
