@@ -1,6 +1,4 @@
-#ifndef COLLADA_HEADER
-#define COLLADA_HEADER
-
+#pragma once
 // MeshIO Copyright © 2019 Andy Maloney <asmaloney@gmail.com>
 // SPDX-License-Identifier: BSD-3-Clause
 
@@ -12,5 +10,3 @@ class COLLADAFilter final : public mioAbstractLoader
  public:
    COLLADAFilter();
 };
-
-#endif

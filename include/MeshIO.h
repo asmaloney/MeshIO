@@ -1,5 +1,4 @@
 #pragma once
-
 // Copyright © 2019 Andy Maloney <asmaloney@gmail.com>
 // SPDX-License-Identifier: BSD-3-Clause
 
@@ -16,7 +15,7 @@ class MeshIO final : public QObject, public ccIOPluginInterface
  public:
    explicit MeshIO( QObject *parent = nullptr );
 
- protected:
+ private:
    void registerCommands( ccCommandLineInterface *inCmdLine ) override;
 
    FilterList getFilters() override;

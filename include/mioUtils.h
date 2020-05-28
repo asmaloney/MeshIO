@@ -1,6 +1,4 @@
-#ifndef MF_UTILS_HEADER
-#define MF_UTILS_HEADER
-
+#pragma once
 // MeshIO Copyright © 2019 Andy Maloney <asmaloney@gmail.com>
 // SPDX-License-Identifier: BSD-3-Clause
 
@@ -30,5 +28,3 @@ namespace mioUtils
    
    QVariant convertMetaValueToVariant( aiMetadata *inData, unsigned int inValueIndex );
 }
-
-#endif

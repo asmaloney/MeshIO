@@ -1,6 +1,4 @@
-#ifndef IFC_HEADER
-#define IFC_HEADER
-
+#pragma once
 // MeshIO Copyright © 2019 Andy Maloney <asmaloney@gmail.com>
 // SPDX-License-Identifier: BSD-3-Clause
 
@@ -21,5 +19,3 @@ class IFCFilter final : public mioAbstractLoader
    
    QRegularExpression   mNameMatcher;
 };
-
-#endif

@@ -1,6 +1,4 @@
-#ifndef MIO_ABSTRACT_LOADER_HEADER
-#define MIO_ABSTRACT_LOADER_HEADER
-
+#pragma once
 // MeshIO Copyright © 2019 Andy Maloney <asmaloney@gmail.com>
 // SPDX-License-Identifier: BSD-3-Clause
 
@@ -19,5 +17,3 @@ class mioAbstractLoader : public FileIOFilter
 
    virtual void _postProcess( ccHObject &ioContainer );
 };
-
-#endif
