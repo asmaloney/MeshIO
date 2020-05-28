@@ -18,9 +18,9 @@
 #include "mioUtils.h"
 
 
-namespace mioUtils
+namespace
 {
-   static QImage   _getEmbeddedTexture( unsigned int inTextureIndex, const aiScene *inScene )
+   QImage   _getEmbeddedTexture( unsigned int inTextureIndex, const aiScene *inScene )
    {
       QImage    image;
       
@@ -49,7 +49,7 @@ namespace mioUtils
       return QImage::fromData( imageDataByteArray );
    }
    
-   static QImage   _getTextureFromFile( const QString &inPath, const QString &inTexturePath )
+   QImage   _getTextureFromFile( const QString &inPath, const QString &inTexturePath )
    {
       const QString    cPath = QStringLiteral( "%1/%2" ).arg( inPath, inTexturePath );
       
@@ -70,7 +70,7 @@ namespace mioUtils
    }
    
    // Map all the material properties we know about from assimp
-   static void _assignMaterialProperties( aiMaterial *inAIMaterial, ccMaterial::Shared &inCCMaterial )
+   void _assignMaterialProperties( aiMaterial *inAIMaterial, ccMaterial::Shared &inCCMaterial )
    {
       aiColor4D colour;
       
@@ -106,7 +106,10 @@ namespace mioUtils
          inCCMaterial->setTransparency( property );
       }
    }
-   
+}
+
+namespace mioUtils
+{   
    ccMaterialSet *createMaterialSetForMesh( const aiMesh *inMesh, const QString &inPath, const aiScene *inScene )
    {
       if ( inScene->mNumMaterials == 0 )
@@ -442,4 +445,3 @@ namespace mioUtils
       return metaValue;
    }
 }
-   
