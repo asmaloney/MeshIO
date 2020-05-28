@@ -13,11 +13,13 @@ Currently MeshIO supports reading the following formats:
 
 ## Building
 
-- clone this repository in the `CloudCompare/plugins/3rdParty` directory
+- clone this repository in the `CloudCompare/plugins/private` directory
 - make sure the submodule `extern/assmip` is up-to-date by `git pull`ing it
 - re-run CloudCompare's cmake
-- turn on `PLUGIN_MESH_IO` in your cmake options
+- turn on `PLUGIN-3rdParty_MESH_IO` in your cmake options
 - build CloudCompare
+
+Note: If you are building for CloudCompare 2.11.x, use the tagged version at `cloudcompare-2.11.x`
 
 ## Caveat
 
