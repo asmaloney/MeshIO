@@ -1,6 +1,7 @@
 {
 	"type" : "I/O",
 	"name" : "Mesh I/O",
+	"version" : "0.1.0",
 	"icon" : ":/asmaloney/MeshIO/images/icon.svg",
 	"description": "Import mesh formats using the Open Asset Import Library library. Currently reads glTF, COLLADA, and IFC.",
 	"authors" : [

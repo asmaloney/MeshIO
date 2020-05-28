@@ -1,16 +1,16 @@
 # MeshIO Copyright © 2019 Andy Maloney <asmaloney@gmail.com>
 # SPDX-License-Identifier: BSD-3-Clause
 
-cmake_minimum_required( VERSION 3.0 )
-
-option( PLUGIN-3rdParty_MESH_IO "Check to install the MeshIO plugin" OFF )
+option( PLUGIN-3rdParty_MESH_IO "Install the MeshIO plugin" OFF )
 
 if ( PLUGIN-3rdParty_MESH_IO )
 	project( MeshIO )
 
+	AddPlugin( NAME ${PROJECT_NAME} TYPE io )
+	
 	include_directories( BEFORE extern/assimp/include )
-	include_directories( src )
 
+	add_subdirectory( include )
 	add_subdirectory( src )
 	
 	# Turn off the assimp things we don't want
@@ -33,14 +33,12 @@ if ( PLUGIN-3rdParty_MESH_IO )
 	set( ASSIMP_BUILD_GLTF_IMPORTER TRUE CACHE INTERNAL "override ASSIMP flags" FORCE )
 	set( ASSIMP_BUILD_IFC_IMPORTER TRUE CACHE INTERNAL "override ASSIMP flags" FORCE )
 	
-	add_subdirectory( extern/assimp )
+	add_subdirectory( extern/assimp EXCLUDE_FROM_ALL )
 	
 	# See: https://github.com/asmaloney/MeshIO/issues/1
 	if ( AMD64 )
 		message( WARNING "The AMD64 option may cause link errors. If you run into link errors regarding 'inflate_fast', try turning this off." )
 	endif()
-	
-	include( ../../CMakePluginTpl.cmake )
 
 	target_link_libraries( ${PROJECT_NAME} assimp )
 endif()
