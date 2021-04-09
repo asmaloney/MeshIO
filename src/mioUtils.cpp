@@ -429,6 +429,13 @@ namespace mioUtils
             break;
          }
 
+         case AI_AIMETADATA:
+         {
+            // This is recursive data used for glTF.
+            // TODO: Figure out how to handle this properly
+            break;
+         }
+
          case AI_META_MAX:
          case FORCE_32BIT:
          {
