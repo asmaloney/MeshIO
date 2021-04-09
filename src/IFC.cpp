@@ -6,7 +6,6 @@
 
 #include "IFC.h"
 
-
 IFCFilter::IFCFilter() :
    mioAbstractLoader( {
       "_IFC Filter",
@@ -29,13 +28,13 @@ void IFCFilter::_postProcess( ccHObject &ioContainer )
 
 void IFCFilter::_recursiveRename( ccHObject *ioContainer )
 {
-   const auto    cChildCount = ioContainer->getChildrenNumber();
-   
+   const auto cChildCount = ioContainer->getChildrenNumber();
+
    for ( unsigned int i = 0; i < cChildCount; ++i )
    {
       _recursiveRename( ioContainer->getChild( i ) );
    }
-   
+
    if ( ioContainer->getName() == QLatin1String( "$RelAggregates" ) )
    {
       ioContainer->setName( QCoreApplication::translate( "MeshIO", "Unnamed Group" ) );
@@ -43,7 +42,7 @@ void IFCFilter::_recursiveRename( ccHObject *ioContainer )
    else
    {
       auto match = mNameMatcher.match( ioContainer->getName() );
-      
+
       if ( match.hasMatch() )
       {
          // Split names of the form:
@@ -51,14 +50,14 @@ void IFCFilter::_recursiveRename( ccHObject *ioContainer )
          // into type, name, and GUID:
          //    IfcBeam, Holzbalken-4, 1X4dAmiW97Nurao$8fngpg
          // Then rename our node with "name" put "type" and "GUID" into our meta data
-         
+
          const QString cType = match.captured( "type" );
          const QString cName = match.captured( "name" );
          const QString cGUID = match.captured( "guid" );
-         
+
          ioContainer->setMetaData( "IFC Type", cType );
          ioContainer->setMetaData( "IFC GUID", cGUID );
-         
+
          ioContainer->setName( cName );
       }
    }

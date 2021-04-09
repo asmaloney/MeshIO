@@ -4,15 +4,14 @@
 
 #include "FileIOFilter.h"
 
-
 class mioAbstractLoader : public FileIOFilter
 {
- public:
+public:
    bool canSave( CC_CLASS_ENUM inType, bool &outMultiple, bool &outExclusive ) const override;
 
-   CC_FILE_ERROR loadFile( const QString &inFileName, ccHObject &ioContainer, LoadParameters &inParameters ) override;   
-   
- protected:
+   CC_FILE_ERROR loadFile( const QString &inFileName, ccHObject &ioContainer, LoadParameters &inParameters ) override;
+
+protected:
    explicit mioAbstractLoader( const FileIOFilter::FilterInfo &info );
 
    virtual void _postProcess( ccHObject &ioContainer );

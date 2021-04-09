@@ -6,16 +6,15 @@
 
 #include "mioAbstractLoader.h"
 
-
 class IFCFilter final : public mioAbstractLoader
 {
- public:
+public:
    IFCFilter();
-   
- private:
+
+private:
    void _postProcess( ccHObject &ioContainer ) override;
-   
+
    void _recursiveRename( ccHObject *ioContainer );
-   
-   QRegularExpression   mNameMatcher;
+
+   QRegularExpression mNameMatcher;
 };

@@ -3,7 +3,6 @@
 
 #include "COLLADA.h"
 
-
 COLLADAFilter::COLLADAFilter() :
    mioAbstractLoader( {
       "_COLLADA Filter",

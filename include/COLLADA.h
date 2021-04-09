@@ -4,9 +4,8 @@
 
 #include "mioAbstractLoader.h"
 
-
 class COLLADAFilter final : public mioAbstractLoader
 {
- public:
+public:
    COLLADAFilter();
 };

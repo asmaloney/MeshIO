@@ -4,7 +4,6 @@
 
 #include "ccIOPluginInterface.h"
 
-
 class MeshIO final : public QObject, public ccIOPluginInterface
 {
    Q_OBJECT
@@ -12,10 +11,10 @@ class MeshIO final : public QObject, public ccIOPluginInterface
 
    Q_PLUGIN_METADATA( IID "com.asmaloney.plugin.MeshIO" FILE "../info.json" )
 
- public:
+public:
    explicit MeshIO( QObject *parent = nullptr );
 
- private:
+private:
    void registerCommands( ccCommandLineInterface *inCmdLine ) override;
 
    FilterList getFilters() override;

@@ -17,14 +17,13 @@ class aiMesh;
 class aiMetadata;
 class aiScene;
 
-
 namespace mioUtils
 {
-   ccMaterialSet    *createMaterialSetForMesh( const aiMesh *inMesh, const QString &inPath, const aiScene *inScene );
-   
-   ccMesh   *newCCMeshFromAIMesh( const aiMesh *inMesh );
-   
-   ccGLMatrix   convertMatrix( const aiMatrix4x4 &inAssimpMatrix );
-   
+   ccMaterialSet *createMaterialSetForMesh( const aiMesh *inMesh, const QString &inPath, const aiScene *inScene );
+
+   ccMesh *newCCMeshFromAIMesh( const aiMesh *inMesh );
+
+   ccGLMatrix convertMatrix( const aiMatrix4x4 &inAssimpMatrix );
+
    QVariant convertMetaValueToVariant( aiMetadata *inData, unsigned int inValueIndex );
 }

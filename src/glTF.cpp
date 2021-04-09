@@ -3,7 +3,6 @@
 
 #include "glTF.h"
 
-
 glTFFilter::glTFFilter() :
    mioAbstractLoader( {
       "_glTF Filter",

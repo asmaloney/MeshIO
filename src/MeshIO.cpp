@@ -6,20 +6,16 @@
 #include "MeshIO.h"
 
 #include "COLLADA.h"
-#include "glTF.h"
 #include "IFC.h"
+#include "glTF.h"
 
-
-MeshIO::MeshIO( QObject *parent ) :
-   QObject( parent ),
-   ccIOPluginInterface( ":/asmaloney/MeshIO/info.json" )
+MeshIO::MeshIO( QObject *parent ) : QObject( parent ), ccIOPluginInterface( ":/asmaloney/MeshIO/info.json" )
 {
-   const QString    cAssimpVer = QStringLiteral( "[MeshIO] Using Assimp %1.%2 (%3-%4)" )
-                                 .arg( QString::number( aiGetVersionMajor() ),
-                                       QString::number( aiGetVersionMinor() ) )
+   const QString cAssimpVer = QStringLiteral( "[MeshIO] Using Assimp %1.%2 (%3-%4)" )
+                                 .arg( QString::number( aiGetVersionMajor() ), QString::number( aiGetVersionMinor() ) )
                                  .arg( aiGetVersionRevision(), 0, 16 )
                                  .arg( aiGetBranchName() );
-   
+
    ccLog::Print( cAssimpVer );
 }
 

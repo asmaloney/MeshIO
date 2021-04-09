@@ -4,9 +4,8 @@
 
 #include "mioAbstractLoader.h"
 
-
 class glTFFilter final : public mioAbstractLoader
 {
- public:
+public:
    glTFFilter();
 };
