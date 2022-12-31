@@ -5,7 +5,6 @@
 #include <QRegularExpression>
 #include <QVector3D>
 
-#include "ccHObjectCaster.h"
 #include "ccMaterialSet.h"
 #include "ccMesh.h"
 #include "ccPointCloud.h"
