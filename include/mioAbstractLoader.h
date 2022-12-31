@@ -14,5 +14,7 @@ public:
 protected:
    explicit mioAbstractLoader( const FileIOFilter::FilterInfo &info );
 
+   // Override this to do additional postprocessing on the data.
+   // e.g. object renaming or cleaning up the object hierarchy.
    virtual void _postProcess( ccHObject &ioContainer );
 };
