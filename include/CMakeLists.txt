@@ -9,8 +9,6 @@ target_sources( ${PROJECT_NAME}
 		${CMAKE_CURRENT_LIST_DIR}/MeshIO.h
 		${CMAKE_CURRENT_LIST_DIR}/mioAbstractLoader.h
 		${CMAKE_CURRENT_LIST_DIR}/mioUtils.h
-		${CMAKE_CURRENT_LIST_DIR}/OBJ.h
-		${CMAKE_CURRENT_LIST_DIR}/PLY.h
 )
 
 target_include_directories( ${PROJECT_NAME}

@@ -7,8 +7,5 @@
 class PLYFilter : public mioAbstractLoader
 {
 public:
-   QStringList getFileFilters( bool onImport ) const override;
-   QString getDefaultExtension() const override;
-
-   bool canLoadExtension( const QString &inUpperCaseExt ) const override;
+   PLYFilter();
 };

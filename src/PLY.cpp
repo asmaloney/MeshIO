@@ -3,32 +3,16 @@
 
 #include "PLY.h"
 
-QStringList PLYFilter::getFileFilters( bool onImport ) const
+PLYFilter::PLYFilter() :
+   // clang-format off
+   mioAbstractLoader( {
+	  "MeshIO PLY Filter",
+	  FileIOFilter::DEFAULT_PRIORITY,
+	  QStringList{ "ply" },
+	  "ply",
+	  QStringList{ "MeshIO - PLY file (*.ply)" },
+	  QStringList(),
+	  Import
+   } )
 {
-   if ( onImport )
-   {
-      // import
-      return {
-         QStringLiteral( "MeshIO - PLY file (*.ply)" ),
-      };
-   }
-   else
-   {
-      // export
-      return {};
-   }
-}
-
-QString PLYFilter::getDefaultExtension() const
-{
-   return QStringLiteral( "ply" );
-}
-
-bool PLYFilter::canLoadExtension( const QString &inUpperCaseExt ) const
-{
-   const QStringList extensions{
-      "PLY",
-   };
-
-   return extensions.contains( inUpperCaseExt );
 }
