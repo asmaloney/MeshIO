@@ -26,9 +26,10 @@ void MeshIO::registerCommands( ccCommandLineInterface *inCmdLine )
 
 ccIOPluginInterface::FilterList MeshIO::getFilters()
 {
+   // clang-format off
    return {
       FileIOFilter::Shared( new COLLADAFilter ),
       FileIOFilter::Shared( new glTFFilter ),
-      FileIOFilter::Shared( new IFCFilter ),
+      FileIOFilter::Shared( new IFCFilter ), 
    };
 }
