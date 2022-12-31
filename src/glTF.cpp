@@ -4,9 +4,10 @@
 #include "glTF.h"
 
 glTFFilter::glTFFilter() :
+   // clang-format off
    mioAbstractLoader( {
-      "_glTF Filter",
-      FileIOFilter::DEFAULT_PRIORITY,	// priority
+      "MeshIO glTF Filter",
+      FileIOFilter::DEFAULT_PRIORITY,
       QStringList{ "gltf", "glb" },
       "gltf",
       QStringList{ "MeshIO - glTF file (*.gltf *.glb)" },

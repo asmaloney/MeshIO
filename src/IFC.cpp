@@ -7,8 +7,9 @@
 #include "IFC.h"
 
 IFCFilter::IFCFilter() :
+   // clang-format off
    mioAbstractLoader( {
-      "_IFC Filter",
+      "MeshIO IFC Filter",
       FileIOFilter::DEFAULT_PRIORITY,
       QStringList{ "ifc", "stp", "step" },
       "ifc",

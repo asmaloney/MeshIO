@@ -4,9 +4,10 @@
 #include "COLLADA.h"
 
 COLLADAFilter::COLLADAFilter() :
+   // clang-format off
    mioAbstractLoader( {
-      "_COLLADA Filter",
-      FileIOFilter::DEFAULT_PRIORITY,	// priority
+      "MeshIO COLLADA Filter",
+      FileIOFilter::DEFAULT_PRIORITY,
       QStringList{ "dae" },
       "dae",
       QStringList{ "MeshIO - COLLADA file (*.dae)" },
