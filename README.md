@@ -28,11 +28,61 @@ Once you have it building properly:
 
 Note: If you are building for _CloudCompare 2.11.x_, use the tagged version of MeshIO at `cloudcompare-2.11.x`
 
+## Adding Another Format
+
+As long as it is a format supported by Assimp, getting the basics implemented is fairly straightforward (a bunch of copy-paste).
+
+For example, to add a new format "Foo":
+
+- copy and rename the header & source file of an existing importer (e.g. glTF)
+- add the header & source files to the appropriate `CMakeLists.txt` files
+- change the `FilterInfo` info in the constructor for the new format (details of the struct are found in CloudCompare's FileIOFilter.h) - the `id` should start with `MeshIO`
+  ```cpp
+  FooFilter::FooFilter() :
+      // clang-format off
+      mioAbstractLoader( {
+          "MeshIO Foo Filter",
+          FileIOFilter::DEFAULT_PRIORITY,
+          QStringList{ "foo", "bar" },
+          "foo",
+          QStringList{ "MeshIO - Foo file (*.foo *.bar)" },
+          QStringList(),
+          Import
+      } )
+  {
+  }
+  ```
+- add the new importer to MeshIO::getFilters() in MeshIO.cpp:
+  ```cpp
+  ccIOPluginInterface::FilterList MeshIO::getFilters()
+  {
+    // clang-format off
+    return {
+        FileIOFilter::Shared( new COLLADAFilter ),
+        FileIOFilter::Shared( new glTFFilter ),
+        FileIOFilter::Shared( new IFCFilter ),
+        FileIOFilter::Shared( new FooFilter ),  // <--
+    };
+  }
+  ```
+- set the CMake variable in `CMakeLists.txt` so that Assimp builds the format:
+  ```cmake
+  set( ASSIMP_BUILD_FOO_IMPORTER TRUE CACHE INTERNAL "override ASSIMP flags" FORCE )
+  ```
+
+This should result in the basic geometry and materials being loaded.
+
+### Next Steps
+
+You may need to massage the data a bit to make it suitable for working with in CloudCompare. For example the IFC importer cleans up some naming, and you might need to clean up object hierarchies. This can be done by overriding `mioAbstractLoader::_postProcess()`.
+
+Once you have it working, please consider contributing it using a [pull request](https://github.com/asmaloney/MeshIO/pulls).
+
 ## Caveat
 
-This plugin is using another library to read these file formats. There will be problems with some files (e.g. IFC-SPF is not 100% implemented). It also means that some mesh names might be lost when importing some formats.
+This plugin is using [another library](https://github.com/assimp/assimp) to read these file formats. There will be problems with some files (e.g. [IFC-SPF](https://en.wikipedia.org/wiki/ISO_10303-21) is not 100% implemented). It also means that some mesh names might be lost when importing some formats.
 
-Because this plugin is basically translating the Assimp data into something CloudCompare understands, it can be tricky to figure out where the problem lies.
+Because this plugin is basically translating the [Assimp](https://github.com/assimp/assimp) data into something [CloudCompare](https://github.com/CloudCompare/CloudCompare) understands, it can be tricky to figure out where the problem lies since it could involve any or all of the three components.
 
 If you find files that do not work as expected, please add an [issue here](https://github.com/asmaloney/MeshIO/issues) and attach the smallest example you have that isn't working. I will try to assess where the problem lies and either report it to the [Assimp](https://github.com/assimp/assimp) project or [CloudCompare](https://github.com/CloudCompare/CloudCompare) project as necessary.
 
