@@ -53,7 +53,7 @@ namespace
    class _ProgressHandler : public QProgressDialog, public Assimp::ProgressHandler
    {
    public:
-      _ProgressHandler( const QString &inText ) : cText( inText )
+      explicit _ProgressHandler( const QString &inText ) : cText( inText )
       {
          setWindowModality( Qt::WindowModal );
          setWindowTitle( tr( "Import Mesh" ) );
@@ -106,7 +106,7 @@ namespace
          ioContainer.applyGLTransformation_recursive();
          ioContainer.resetGLTransformationHistory();
 
-         _pruneTree( &ioContainer );
+         _pruneTree( &ioContainer, &ioContainer );
       }
 
    private:
@@ -193,7 +193,7 @@ namespace
          }
       }
 
-      void _pruneTree( ccHObject *ioCurrentObject )
+      void _pruneTree( ccHObject *inTopLevel, ccHObject *ioCurrentObject )
       {
          auto childCount = ioCurrentObject->getChildrenNumber();
 
@@ -207,7 +207,7 @@ namespace
 
          for ( auto child : children )
          {
-            _pruneTree( child );
+            _pruneTree( inTopLevel, child );
          }
 
          // If we are not a "naked" hierarchy object, then we contain useful info, so return
@@ -226,41 +226,45 @@ namespace
 
          // Our child count will be different now if we deleted some objects
          childCount = ioCurrentObject->getChildrenNumber();
-         ;
 
-         // If we don't have children, then we can be pruned
-         if ( childCount == 0 )
+         // If we aren't the top-level object, see if we can collapse some objects
+         if ( inTopLevel != ioCurrentObject )
          {
-#ifdef QT_DEBUG
-            std::cout << "pruning: " << ioCurrentObject->getName().toLatin1().constData()
-                      << "  from parent: " << parent->getName().toLatin1().constData() << std::endl;
-#endif
-
-            parent->detachChild( ioCurrentObject );
-
-            delete ioCurrentObject;
-         }
-         else if ( ( childCount == 1 ) && ioCurrentObject->metaData().empty() )
-         {
-            // If we have one child, and it doesn't have useful data,
-            // Then we can reparent it
-
-            auto child = ioCurrentObject->getChild( 0 );
-
-            if ( child != nullptr )
+            // If we don't have children then we can be pruned.
+            // The top-level will be discarded in FileIOFilter::LoadFromFile if it's empty.
+            if ( childCount == 0 )
             {
 #ifdef QT_DEBUG
-               std::cout << "reparenting: " << child->getName().toLatin1().constData() << " from "
-                         << ioCurrentObject->getName().toLatin1().constData() << " to "
-                         << parent->getName().toLatin1().constData() << std::endl;
+               std::cout << "pruning: " << ioCurrentObject->getName().toLatin1().constData()
+                         << "  from parent: " << parent->getName().toLatin1().constData() << std::endl;
 #endif
 
-               ioCurrentObject->detachChild( child );
-               child->setName( ioCurrentObject->getName() );
-
-               parent->addChild( child );
+               parent->detachChild( ioCurrentObject );
 
                delete ioCurrentObject;
+            }
+            else if ( ( childCount == 1 ) && ioCurrentObject->metaData().empty() )
+            {
+               // If we have one child, and it doesn't have useful data,
+               // Then we can reparent it
+
+               auto child = ioCurrentObject->getChild( 0 );
+
+               if ( child != nullptr )
+               {
+#ifdef QT_DEBUG
+                  std::cout << "reparenting: " << child->getName().toLatin1().constData() << " from "
+                            << ioCurrentObject->getName().toLatin1().constData() << " to "
+                            << parent->getName().toLatin1().constData() << std::endl;
+#endif
+
+                  ioCurrentObject->detachChild( child );
+                  child->setName( ioCurrentObject->getName() );
+
+                  parent->addChild( child );
+
+                  delete ioCurrentObject;
+               }
             }
          }
       }
