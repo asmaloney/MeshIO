@@ -333,10 +333,9 @@ CC_FILE_ERROR mioAbstractLoader::loadFile( const QString &inFileName, ccHObject 
    importer.SetPropertyBool( AI_CONFIG_PP_FID_IGNORE_TEXTURECOORDS, true );
 
    const aiScene *cScene =
-      importer.ReadFile( inFileName.toStdString(), aiProcess_FindInvalidData | aiProcess_ImproveCacheLocality |
-                                                      aiProcess_JoinIdenticalVertices | aiProcess_RemoveComponent |
-                                                      aiProcess_RemoveRedundantMaterials | aiProcess_Triangulate |
-                                                      aiProcess_ValidateDataStructure );
+      importer.ReadFile( inFileName.toStdString(), aiProcess_FindInvalidData | aiProcess_JoinIdenticalVertices |
+                                                      aiProcess_RemoveComponent | aiProcess_RemoveRedundantMaterials |
+                                                      aiProcess_Triangulate | aiProcess_ValidateDataStructure );
 
    if ( cScene == nullptr )
    {
