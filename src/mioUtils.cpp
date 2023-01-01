@@ -59,7 +59,17 @@ namespace
 
       QImageReader reader( cPath );
 
-      return reader.read();
+      QImage texture = reader.read();
+
+      if ( texture.isNull() )
+      {
+         ccLog::Error(
+            QStringLiteral( "[MeshIO] Error reading material: '%1' - %2" ).arg( cPath, reader.errorString() ) );
+      }
+
+      return texture;
+   }
+
    }
 
    inline ccColor::Rgbaf _convertColour( const aiColor4D &inColour )
