@@ -166,6 +166,14 @@ namespace mioUtils
          material->setEmission( _convertColour( color ) );
       }
 
+      float shininess = 0.0f;
+
+      found = aiMaterial->Get( AI_MATKEY_SHININESS, shininess );
+      if ( found == aiReturn_SUCCESS )
+      {
+         material->setShininess( shininess );
+      }
+
       // Set Textures
       // We only handle the diffuse texture for now
       if ( aiMaterial->GetTextureCount( aiTextureType_DIFFUSE ) > 0 )
