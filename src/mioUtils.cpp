@@ -131,7 +131,7 @@ namespace
             property = std::clamp( property, 0.0f, 128.0f );
          }
 
-         inCCMaterial->setShininess( 128.0f );
+         inCCMaterial->setShininess( property );
       }
 
       if ( inAIMaterial->Get( AI_MATKEY_OPACITY, property ) == AI_SUCCESS )
