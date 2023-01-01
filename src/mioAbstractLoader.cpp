@@ -317,16 +317,25 @@ CC_FILE_ERROR mioAbstractLoader::loadFile( const QString &inFileName, ccHObject 
 
    // removes things we don't care about from the import
    importer.SetPropertyInteger( AI_CONFIG_PP_RVC_FLAGS, aiComponent_ANIMATIONS | aiComponent_BONEWEIGHTS |
-                                                           aiComponent_CAMERAS | aiComponent_LIGHTS );
+                                                           aiComponent_CAMERAS | aiComponent_LIGHTS |
+                                                           aiComponent_TANGENTS_AND_BITANGENTS );
 
+   // disable generation of skeleton dummy meshes
    importer.SetPropertyBool( AI_CONFIG_IMPORT_NO_SKELETON_MESHES, true );
+
+   // use COLLADA names as node and mesh names
    importer.SetPropertyBool( AI_CONFIG_IMPORT_COLLADA_USE_COLLADA_NAMES, true );
+
+   // convert degenerate triangles to lines and degenerate lines to points
    importer.SetPropertyBool( AI_CONFIG_PP_FD_REMOVE, true );
+
+   // ignore texture coordinates
    importer.SetPropertyBool( AI_CONFIG_PP_FID_IGNORE_TEXTURECOORDS, true );
 
    const aiScene *cScene =
-      importer.ReadFile( inFileName.toStdString(), aiProcess_FindInvalidData | aiProcess_JoinIdenticalVertices |
-                                                      aiProcess_RemoveComponent | aiProcess_Triangulate |
+      importer.ReadFile( inFileName.toStdString(), aiProcess_FindInvalidData | aiProcess_ImproveCacheLocality |
+                                                      aiProcess_JoinIdenticalVertices | aiProcess_RemoveComponent |
+                                                      aiProcess_RemoveRedundantMaterials | aiProcess_Triangulate |
                                                       aiProcess_ValidateDataStructure );
 
    if ( cScene == nullptr )
