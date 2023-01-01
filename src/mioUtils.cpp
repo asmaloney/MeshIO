@@ -171,6 +171,33 @@ namespace mioUtils
       found = aiMaterial->Get( AI_MATKEY_SHININESS, shininess );
       if ( found == aiReturn_SUCCESS )
       {
+         // CloudCompare is expecting a shininess value in the range 0-128 (see: ccMaterial::applyGL()).
+
+         // The COLLADA 1.5 spec says:
+         // To maximize application compatibility, it is suggested that developers use the Blinn-Torrance-Sparrow for
+         // <shininess> in the range of 0 to 1. For <shininess> greater than 1.0, the COLLADA author was probably using
+         // an application that followed the Blinn-Phong lighting model, so it is recommended to support both Blinn
+         // equations according to whichever range the shininess resides in.
+
+         // And assimp says (and this would apply to all mondels - not just COLLADA):
+         // Defines the shininess of a phong-shaded material. This is actually the exponent of the phong specular
+         // equation.
+
+         // So we'll assume we're working with Blinn-Phong.
+         // Check if shininess is in the range [0, 1] and scale it up to [0, 128].
+         // If it's not, we'll clamp it to [0, 128].
+         if ( ( shininess > 0.0f ) && ( shininess <= 1.0f ) )
+         {
+            shininess *= 128.0f;
+         }
+         else if ( ( shininess < 0.0f ) || ( shininess > 128.0f ) )
+         {
+            ccLog::Warning( QStringLiteral( "[MeshIO] Clamping shininess to range [0, 128]: %1" )
+                               .arg( QString::number( shininess ) ) );
+
+            shininess = std::clamp( shininess, 0.0f, 128.0f );
+         }
+
          material->setShininess( shininess );
       }
 
