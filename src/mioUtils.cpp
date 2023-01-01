@@ -70,6 +70,9 @@ namespace
       return texture;
    }
 
+   inline ccColor::Rgbaf _convertColour( const aiColor3D &inColour )
+   {
+      return ccColor::Rgbaf{ inColour.r, inColour.g, inColour.b, 0.0f };
    }
 
    inline ccColor::Rgbaf _convertColour( const aiColor4D &inColour )
@@ -118,6 +121,8 @@ namespace
 
 namespace mioUtils
 {
+   // For assimp details, see:
+   //	https://assimp-docs.readthedocs.io/en/latest/usage/use_the_lib.html#material-system
    ccMaterialSet *createMaterialSetForMesh( const aiMesh *inMesh, const QString &inPath, const aiScene *inScene )
    {
       if ( inScene->mNumMaterials == 0 )
@@ -130,11 +135,39 @@ namespace mioUtils
 
       const aiString cName = aiMaterial->GetName();
 
-      auto newMaterial = ccMaterial::Shared( new ccMaterial( cName.C_Str() ) );
+      auto material = ccMaterial::Shared( new ccMaterial( cName.C_Str() ) );
 
-      ccLog::PrintDebug( QStringLiteral( "[MeshIO] Creating material '%1'" ).arg( newMaterial->getName() ) );
+      ccLog::PrintDebug( QStringLiteral( "[MeshIO] Creating material '%1'" ).arg( material->getName() ) );
 
-      // we only handle the diffuse texture for now
+      aiColor3D color;
+
+      // Set colours
+      auto found = aiMaterial->Get( AI_MATKEY_COLOR_DIFFUSE, color );
+      if ( found == aiReturn_SUCCESS )
+      {
+         material->setDiffuse( _convertColour( color ) );
+      }
+
+      found = aiMaterial->Get( AI_MATKEY_COLOR_SPECULAR, color );
+      if ( found == aiReturn_SUCCESS )
+      {
+         material->setSpecular( _convertColour( color ) );
+      }
+
+      found = aiMaterial->Get( AI_MATKEY_COLOR_AMBIENT, color );
+      if ( found == aiReturn_SUCCESS )
+      {
+         material->setAmbient( _convertColour( color ) );
+      }
+
+      found = aiMaterial->Get( AI_MATKEY_COLOR_EMISSIVE, color );
+      if ( found == aiReturn_SUCCESS )
+      {
+         material->setEmission( _convertColour( color ) );
+      }
+
+      // Set Textures
+      // We only handle the diffuse texture for now
       if ( aiMaterial->GetTextureCount( aiTextureType_DIFFUSE ) > 0 )
       {
          aiString texturePath;
@@ -166,16 +199,16 @@ namespace mioUtils
 
             if ( !image.isNull() )
             {
-               newMaterial->setTexture( image, path );
+               material->setTexture( image, path );
             }
          }
       }
 
-      _assignMaterialProperties( aiMaterial, newMaterial );
+      _assignMaterialProperties( aiMaterial, material );
 
       ccMaterialSet *materialSet = new ccMaterialSet( "Materials" );
 
-      materialSet->addMaterial( newMaterial );
+      materialSet->addMaterial( material );
 
       return materialSet;
    }
