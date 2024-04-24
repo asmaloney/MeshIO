@@ -41,7 +41,7 @@ namespace
          }
          else if ( message.startsWith( "Info" ) )
          {
-            messageLevel = ccLog::LOG_DEBUG;
+            messageLevel = ccLog::LOG_STANDARD;
          }
 
          message.prepend( "[MeshIO] ai - " );
