@@ -11,6 +11,11 @@ if ( PLUGIN-3rdParty_MESH_IO )
 
 	AddPlugin( NAME ${PROJECT_NAME} TYPE io )
 	
+	target_compile_features( ${PROJECT_NAME}
+	    PRIVATE
+	        cxx_std_17
+	)
+
 	include_directories( BEFORE extern/assimp/include )
 
 	add_subdirectory( include )
