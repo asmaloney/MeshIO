@@ -4,6 +4,9 @@
 option( PLUGIN-3rdParty_MESH_IO "Install the MeshIO plugin" OFF )
 
 if ( PLUGIN-3rdParty_MESH_IO )
+	# assimp requires at least 3.22, so put it here so it's obivous where it's coming from
+	CMAKE_MINIMUM_REQUIRED( VERSION 3.22 )
+
 	project( MeshIO )
 
 	AddPlugin( NAME ${PROJECT_NAME} TYPE io )
