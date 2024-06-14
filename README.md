@@ -11,6 +11,13 @@ Currently MeshIO supports reading the following formats:
 - [glTF](https://en.wikipedia.org/wiki/GlTF) (\*.gltf \*.glb)
 - [IFC-SPF](https://en.wikipedia.org/wiki/ISO_10303-21) a.k.a STEP (\*.ifc \*.stp \*.step)
 
+## Requirements
+
+MeshIO has two requirements that are currently different from CloudCompare itself:
+
+1. CMake >= 3.22
+2. C++17 compiler
+
 ## Building
 
 Unfortunately, because of the way CloudCompare is set up, you have to build all of CloudCompare before you can build a plugin for it. So the first thing to do is to get the [CloudCompare source](https://github.com/CloudCompare/CloudCompare) and [build CloudCompare](https://github.com/CloudCompare/CloudCompare/blob/master/BUILD.md).
