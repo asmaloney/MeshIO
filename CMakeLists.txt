@@ -16,6 +16,15 @@ if ( PLUGIN-3rdParty_MESH_IO )
 	        cxx_std_17
 	)
 
+	set_target_properties( ${PROJECT_NAME}
+		PROPERTIES
+			CXX_EXTENSIONS NO
+			EXPORT_COMPILE_COMMANDS ON
+			POSITION_INDEPENDENT_CODE ON
+			INTERPROCEDURAL_OPTIMIZATION ON
+			INTERPROCEDURAL_OPTIMIZATION_DEBUG OFF
+	)
+
 	include_directories( BEFORE extern/assimp/include )
 
 	add_subdirectory( include )
