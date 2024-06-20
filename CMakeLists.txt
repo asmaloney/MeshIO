@@ -56,6 +56,11 @@ if ( PLUGIN-3rdParty_MESH_IO )
 	set( ASSIMP_BUILD_GLTF_IMPORTER TRUE CACHE INTERNAL "override ASSIMP flags" FORCE )
 	set( ASSIMP_BUILD_IFC_IMPORTER TRUE CACHE INTERNAL "override ASSIMP flags" FORCE )
 	
+	# Linux needs zlib built with -fPIC, so build from source
+	if ( UNIX AND NOT APPLE )
+		set( ASSIMP_BUILD_ZLIB TRUE CACHE INTERNAL "override ASSIMP flags" )
+	endif()
+	
 	add_subdirectory( extern/assimp EXCLUDE_FROM_ALL )
 		
 	# See: https://github.com/asmaloney/MeshIO/issues/1
